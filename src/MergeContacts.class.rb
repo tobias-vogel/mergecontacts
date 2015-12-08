@@ -6,7 +6,9 @@ class MergeContacts
 
   def initialize(filenames)
     @targetFilename = filenames.shift()
-    if File.exists?(@targetFilename)
+    if @targetFilename.nil?
+      raise "No target file was provided. Exiting"
+    elsif File.exists?(@targetFilename)
       raise "Target file #{@targetFilename} exists already. Exiting."
     end
     @filenames = filenames
@@ -16,6 +18,7 @@ class MergeContacts
     loadAndClenseContactsFromFiles()
     mergeContacts() 
     exportContactsToTsv()
+    puts "Finished."
   end
 
   private
