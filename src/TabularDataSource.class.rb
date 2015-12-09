@@ -1,4 +1,6 @@
 require_relative "DataSource.class.rb"
+require_relative "CardDavContact.class.rb"
+require_relative "Normalizer.class.rb"
 
 class TabularDataSource < DataSource
 
@@ -8,6 +10,7 @@ class TabularDataSource < DataSource
     fieldCount = calculateFieldCount(@separator, headerLine)
     content = removeSuperfluousLineBreaksFromTabularFile(@separator, fieldCount, content)
     @contacts = parseIntoContacts(content)
+    @contacts = normalizeContacts()
   end
 
   #TODO ensure that this class should not be directly instantiable

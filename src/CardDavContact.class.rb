@@ -1,10 +1,22 @@
 class CardDavContact
-  attr_accessor :givenname
-  attr_accessor :familyname
-  # ...
-
-  def initialize hash
-    @givenname = hash["givenname"]
-    @familyname = hash["familyname"]
-  end
+  attr_accessor :givenName,
+  :familyName,
+  :nickname,
+  :mail,
+  :workphone,
+  :homephone,
+  :fax,
+  :pager,
+  :mobilephone,
+  :street,
+  :state,
+  :zip,
+  :country,
+  :title,
+  :organizationalUnit,
+  :organization,
+  :year,
+  :month,
+  :day,
+  :notes
 end
