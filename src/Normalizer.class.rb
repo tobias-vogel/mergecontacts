@@ -1,23 +1,30 @@
 class Normalizer
   @@configuration = nil
   
-  def loadDefaults()
+  def Normalizer.loadDefaults()
     #TODO read config.ini into configHash
+    @@configuration = {}
     @@configuration["defaultCountryCode"] = "0049"
   end
 
-  def normalize(contact)
+  def Normalizer.normalize(contact)
     if @@configuration.nil?
       loadDefaults()
     end
 
     #TODO implement
-    normalizeEncoding(contacts)
+    normalizeEncoding(contact)
     normalizePhoneNumbers(contact)
+
+    return contact
   end
   
   private
-  def normalizePhoneNumbers(contact)
+  def Normalizer.normalizeEncoding(contact)
+    #TODO for each field: convert to utf-8
+  end
+
+  def Normalizer.normalizePhoneNumbers(contact)
     normalizePhoneNumber(contact.workphone)
     normalizePhoneNumber(contact.homephone)
     normalizePhoneNumber(contact.fax)
@@ -25,7 +32,9 @@ class Normalizer
     normalizePhoneNumber(contact.mobilephone)    
   end
   
-  def normalizePhoneNumber(phoneNumber)
+  def Normalizer.normalizePhoneNumber(phoneNumber)
+    return if phoneNumber.nil?
+
     phoneNumber.delete!("(")
     phoneNumber.delete!(")")
     phoneNumber.delete!("-")
