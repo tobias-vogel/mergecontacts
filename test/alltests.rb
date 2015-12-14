@@ -10,3 +10,4 @@ tests.each() do |testFileName|
   test.run()
   puts "OK"
 end
+puts "All tests passed"
