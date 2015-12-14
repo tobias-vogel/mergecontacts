@@ -36,4 +36,14 @@ class CardDavContact
 
     #TODO do something with the remaining attributes in the constructor hash (append them to notes or so)
   end
+  
+  def allAttributesSet?()
+    @@attributes.each() do |attribute|
+      value = instance_variable_get("@#{attribute}")
+      if value.nil?
+        return false
+      end
+    end
+    return true
+  end
 end
