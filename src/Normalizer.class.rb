@@ -13,7 +13,6 @@ class Normalizer
       loadDefaults()
     end
 
-    #TODO implement
     normalizeEncoding(contact)
     normalizePhoneNumbers(contact)
     normalizeEmail(contact)
