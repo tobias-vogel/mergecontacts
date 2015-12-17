@@ -6,21 +6,23 @@ class CardDavContactTest
   include Test
 
   def run()
+    testNormalizeCountry()
+    testNormalizeEMailAddress()
     testCreateCardDavContact()
-    #testNormalizePhoneNumber()
+    testNormalizePhoneNumber()
   end
 
   def testCreateCardDavContact()
     contact = CardDavContact.new()
-    assertEquals(contact.zip, nil)
+    assertEquals("zip code is filled", contact.zip, nil)
 
     contact = CardDavContact.new({:mobilephone => "0049123456"})
-    assertEquals(contact.mobilephone, "0049123456")
-    assertEquals(contact.zip, nil)
+    assertEquals("mobilephone not set properly", contact.mobilephone, "0049123456")
+    assertEquals("zip code is filled", contact.zip, nil)
 
     begin
       contact = CardDavContact.new({:abcxyz => "does not exist"})
-      fail()
+      fail("An unknown key could be added.")
     rescue NameError
       # expected
     end
@@ -51,41 +53,75 @@ class CardDavContactTest
       :day => "d",
       :notes => "n"
     })
-    assertEquals(contact.allAttributesSet?, true)
+    assertEquals("Not all attributes are set.", contact.allAttributesSet?, true)
     end
 
   def testNormalizePhoneNumber()
-    # do nothing
     test(
+      "Phone normalization did something when nothing was expected.",
       CardDavContact.new({:mobilephone => "0049123456"}),
-      CardDavContact.new({:mobilephone => "0049123456"})
+      CardDavContact.new({:mobilephone => "0049123456", :country => "Deutschland"})
     )
 
-    # prepend international pre-dialing
     test(
+      "Prepending international pre-dialing did not work.",
       CardDavContact.new({:mobilephone => "0123456"}),
-      CardDavContact.new({:mobilephone => "0049123456"})
+      CardDavContact.new({:mobilephone => "0049123456", :country => "Deutschland"})
     )
 
-    # remove special characters
     test(
+      "Special characters were not removed.",
       CardDavContact.new({:mobilephone => "(012) 34-56"}),
-      CardDavContact.new({:mobilephone => "0049123456"})
+      CardDavContact.new({:mobilephone => "0049123456", :country => "Deutschland"})
     )
 
-    # remove + in pre-dialing
     test(
+      "+ in pre-dialing was not removed.",
       CardDavContact.new({:mobilephone => "+49 123 456"}),
-      CardDavContact.new({:mobilephone => "0049123456"})
+      CardDavContact.new({:mobilephone => "0049123456", :country => "Deutschland"})
+    )
+
+    test(
+      "Not all phone numbers were normalized.",
+      CardDavContact.new({:workphone => "0123", :homephone => "0123", :fax => "0123", :pager => "0123", :mobilephone => "0123"}),
+      CardDavContact.new({:workphone => "0049123", :homephone => "0049123", :fax => "0049123", :pager => "0049123", :mobilephone => "0049123", :country => "Deutschland"})
+    )
+
+    test(
+      "Strange phone numbers were touched.",
+      CardDavContact.new({:workphone => "123"}),
+      CardDavContact.new({:workphone => "123", :country => "Deutschland"})
+    )
+  end
+  
+  def testNormalizeEMailAddress()
+    test(
+      "E-mail normalization did not work.",
+      CardDavContact.new({:mail => "Ab.Cd@mail.com"}),
+      CardDavContact.new({:mail => "ab.cd@mail.com", :country => "Deutschland"})
     )
   end
 
-  def test(original, expectedResult)
+  def testNormalizeCountry()
+    test(
+      "Country normalization from nil did not work.",
+      CardDavContact.new({:country => nil}),
+      CardDavContact.new({:country => "Deutschland"})
+    )
+
+    test(
+      "Country normalization from """" did not work.",
+      CardDavContact.new({:country => ""}),
+      CardDavContact.new({:country => "Deutschland"})
+    )
+  end
+
+  def test(message = "", original, expectedResult)
     actualResult = Normalizer.normalize(original)
-    assertEquals(actualResult, expectedResult)
+    assertEquals(message, actualResult, expectedResult)
 
     # test idempotence, too
     repeatedResult = Normalizer.normalize(actualResult)
-    assertEquals(repeatedResult, expectedResult)
+    assertEquals(message, repeatedResult, expectedResult)
   end
 end

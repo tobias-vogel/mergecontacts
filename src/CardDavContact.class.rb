@@ -46,4 +46,13 @@ class CardDavContact
     end
     return true
   end
+
+  def eql?(other)
+    @@attributes.each() do |attribute|
+      thisValue = instance_variable_get("@#{attribute}")
+      otherValue = other.instance_variable_get("@#{attribute}")
+      return false unless thisValue.eql?(otherValue)
+    end
+    return true
+  end
 end

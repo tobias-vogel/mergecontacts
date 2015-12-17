@@ -5,6 +5,7 @@ class Normalizer
     #TODO read config.ini into configHash
     @@configuration = {}
     @@configuration["defaultCountryCode"] = "0049"
+    @@configuration["defaultCountry"] = "Deutschland"
   end
 
   def Normalizer.normalize(contact)
@@ -15,6 +16,8 @@ class Normalizer
     #TODO implement
     normalizeEncoding(contact)
     normalizePhoneNumbers(contact)
+    normalizeEmail(contact)
+    normalizeCountry(contact)
 
     return contact
   end
@@ -33,7 +36,7 @@ class Normalizer
   end
   
   def Normalizer.normalizePhoneNumber(phoneNumber)
-    return if phoneNumber.nil?
+    return if phoneNumber.nil?()
 
     phoneNumber.delete!("(")
     phoneNumber.delete!(")")
@@ -52,6 +55,17 @@ class Normalizer
       # add 00 country code
       #TODO read out country code from country
       phoneNumber.gsub!(/^0/, @@configuration["defaultCountryCode"])
+      # don't touch numbers that do not start with a 0
+    end
+  end
+
+  def Normalizer.normalizeEmail(contact)
+    contact.mail.downcase!() unless contact.mail.nil?()
+  end
+
+  def Normalizer.normalizeCountry(contact)
+    if contact.country.to_s().empty?()
+      contact.country = @@configuration["defaultCountry"] 
     end
   end
 end
