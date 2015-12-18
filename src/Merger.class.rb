@@ -3,11 +3,13 @@ class Merger
 
   REPLACEMENT_CHARACTER = '-'
 
-  def Merger.mergeContacts(contactSets)
-    index = createName2ContactsIndex(contactSets)
-#    mergedContacts = index.map() |key, contacts| do
-#      mergeMatchingContacts(contacts)
-#    end
+  def Merger.mergeContacts(mainContacts, otherContactSets)
+    mainContactsIndex = createName2ContactsIndex([mainContacts])
+    otherContactsIndex = createName2ContactsIndex(otherContactSets)
+    # todo finish implementation
+    #    mergedContacts = index.map() |key, contacts| do
+    #      mergeMatchingContacts(contacts)
+    #    end
     return mergedContacts = nil
   end
 

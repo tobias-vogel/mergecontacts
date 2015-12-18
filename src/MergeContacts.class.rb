@@ -24,19 +24,18 @@ class MergeContacts
 
   private
   def loadAndClenseContactsFromFiles()
-    @contacts = []
-    @filenames.each() do |fileSpecifier|
-      prefix, filename = detectType(fileSpecifier)
-      @contacts << [loadFileAndClenseContacts(prefix, filename)]
+    mainContactFileSpecifier = @fileSpecifiers.shift()
+    @mainContacts = loadFileAndCleanseContacts(mainContactFileSpecifier)
+
+    @otherContactSets = []
+    @fileSpecifiers.each() do |fileSpecifier|
+      @otherContactSets << [loadFileAndCleanseContacts(fileSpecifier)]
     end
   end
 
-  def detectType(fileSpecifier)
-    prefix, filename = fileSpecifier.split(":", 2)
-    return prefix, filename
-  end
+  def loadFileAndClenseContacts(fileSpecifier)
+    prefix, filename = detectType(fileSpecifier)
 
-  def loadFileAndClenseContacts(prefix, filename)
     contacts = case prefix
       when "csv" then CsvDataSource.new(filename).loadAndClenseContacts()
       when "tsv" then TsvDataSource.new(filename).loadAndClenseContacts()
@@ -46,8 +45,13 @@ class MergeContacts
     return contacts
   end
 
+  def detectType(fileSpecifier)
+    prefix, filename = fileSpecifier.split(":", 2)
+    return prefix, filename
+  end
+
   def mergeContacts()
-    mergedContacts = Merger.mergeContacts(@contacts)
+    @mainContacts = Merger.mergeContacts(@mainContacts, @otherContactSets)
   end
   
   def exportContactsToTsv()
