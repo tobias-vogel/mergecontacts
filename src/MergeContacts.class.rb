@@ -15,14 +15,14 @@ class MergeContacts
   end
   
   def run
+    #TODO for conflict resolution during merging, it is good to define a main contact file and merge in all other information
     loadAndClenseContactsFromFiles()
-    mergeContacts() 
+    mergeContacts()
     exportContactsToTsv()
     puts "Finished."
   end
 
   private
-
   def loadAndClenseContactsFromFiles()
     @contacts = []
     @filenames.each() do |fileSpecifier|
@@ -47,7 +47,7 @@ class MergeContacts
   end
 
   def mergeContacts()
-    # todo (something with hashmaps where the person names are the keys
+    mergedContacts = Merger.mergeContacts(@contacts)
   end
   
   def exportContactsToTsv()
