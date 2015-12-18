@@ -1,4 +1,4 @@
-require_relative "TsvDataSource.class.rb"
+require_relative("TsvDataSource.class.rb")
 
 class MergeContacts
 
