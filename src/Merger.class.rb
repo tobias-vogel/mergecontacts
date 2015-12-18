@@ -6,11 +6,37 @@ class Merger
   def Merger.mergeContacts(mainContacts, otherContactSets)
     mainContactsIndex = createName2ContactsIndex([mainContacts])
     otherContactsIndex = createName2ContactsIndex(otherContactSets)
-    # todo finish implementation
-    #    mergedContacts = index.map() |key, contacts| do
-    #      mergeMatchingContacts(contacts)
-    #    end
+
+    mergedContacts = []
+
+    mainContactsIndex.each() do |key, contactSet|
+      mainContact = contectSet.first
+      otherContacts = otherContactsIndex.delete(key)
+      mainContact = Merger.mergeOtherContactsIntoMainContact(mainContact, otherContacts)
+      mergedContacts << mainContact
+    end
+    
+    # merge the remaining other contacts together
+    otherContactsIndex.each_value() do |otherContactSet|
+      # use the first of the other contacts as main contact
+      mainContact = otherContactSet.shift()
+      otherContacts = otherContactSet
+      mainContact = Merger.mergeOtherContactsIntoMainContact(mainContact, otherContacts)
+      mergedContacts << mainContact
+    end
     return mergedContacts = nil
+  end
+
+  def Merger.mergeOtherContactsIntoMainContact(mainContact, otherContacts)
+    if otherContacts.nil?()
+      # No other contact set contained contacts for this key. Do not merge anything.
+    else
+      # Merge all other contacts into main contact.
+      otherContacts.each() do |otherContact|
+        mainContact.mergeInOtherContact(otherContact)
+      end
+    end
+    return mainContact
   end
 
   def Merger.createName2ContactsIndex(contactSets)

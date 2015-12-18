@@ -55,4 +55,8 @@ class CardDavContact
     end
     return true
   end
+
+  def mergeInOtherContact(other)
+    #todo implement
+  end
 end
