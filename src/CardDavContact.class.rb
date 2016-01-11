@@ -59,6 +59,6 @@ class CardDavContact
   def mergeInOtherContact(other)
     #todo implement
     # go over all attributes, but respect that phone numbers can be mixed around several fields
-    # @@attributes.each() do |attribute| ...
+      # @@attributes.each() do |attribute| ...
   end
 end

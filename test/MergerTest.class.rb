@@ -33,7 +33,68 @@ class MergerTest
     assertEquals("Franz Müller should have one contact.", contact2Alone, true)
   end
   
+  def test(mainContact, otherContact, expectedResult, message)
+    mainContact.mergeInOtherContact(otherContact)
+    assertEquals(message, mainContact, expectedResult)
+    # idempotence
+    mainContact.mergeInOtherContact(otherContact)
+    assertEquals(message, mainContact, expectedResult)
+  end
+
   def testMerge()
-    #todo
+    testMergeNames()
+    testMergeEMails()
+    testMergePhoneNumbers()
+    testMergeNotes()
+  end
+
+  def testMergeNames()
+    test(
+      CardDavContact.new({:givenName => "Hans"}),
+      CardDavContact.new({:givenName => "Franz"}),
+      CardDavContact.new({:givenName => "Hans Franz"}),
+      "Names should be appended."
+    )
+
+    test(
+      CardDavContact.new({:familyName => "Meier"}),
+      CardDavContact.new({:familyName => "Meier geb. Schwarzenegger"}),
+      CardDavContact.new({:familyName => "Meier geb. Schwarzenegger"}),
+      "Common substring names should be replaced by the longest."
+    )
+  end
+
+  def testMergeEMails()
+    test(
+      CardDavContact.new({:mail => "hans.meier@gmail.com"}),
+      CardDavContact.new({:mail => "hans.meier@hotmail.com"}),
+      CardDavContact.new({:mail => "hans.meier@gmail.com", :notes => "other-mail= hans.meier@hotmail.com"}),
+      "E-Mails should not be appended but be appended to the notes section."
+    )
+  end
+
+  def testMergePhoneNumbers()
+    test(
+      CardDavContact.new({:homephone => "007", :workphone => "123"}),
+      CardDavContact.new({:homephone => "123", :workphone => "007"}),
+      CardDavContact.new({:homephone => "007", :workphone => "123"}),
+      "Phone numbers should not be put into the notes section if they appear somewhere else already (crossed)."
+    )
+
+    test(
+      CardDavContact.new({:homephone => "007", :notes => "other-phone=123"}),
+      CardDavContact.new({:workphone => "123"}),
+      CardDavContact.new({:homephone => "007", :notes => "other-phone=123"}),
+      "All superfluous phone numbers are put into a common phone field in the notes section (and thus are not duplicated)."
+    )
+  end
+
+  def testMergeNotes()
+    test(
+      CardDavContact.new({:homephone => "007", :notes => "other-phone=123"}),
+      CardDavContact.new({:workphone => "123", :notes => "other-mail=abc@lmn.xyz"}),
+      CardDavContact.new({:homephone => "007", :notes => "other-phone=123, other-mail=abc@lmn.xyz"}),
+      "Attributes are not taken (and promoted) from the notes section and notes are properly appended."
+    )    
   end
 end
