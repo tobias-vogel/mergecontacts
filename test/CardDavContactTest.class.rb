@@ -6,9 +6,10 @@ class CardDavContactTest
   include Test
 
   def run()
+    testCreateCardDavContact()
+    testClone()
     testNormalizeCountry()
     testNormalizeEMailAddress()
-    testCreateCardDavContact()
     testNormalizePhoneNumber()
   end
 
@@ -116,6 +117,17 @@ class CardDavContactTest
     )
   end
 
+  def testClone()
+    original = CardDavContact.new({:givenName => "Hans"})
+    clone = original.clone()
+    assertEquals("Clone should have the same name.", clone.givenName, "Hans")
+
+    original.givenName = "Franz"
+    assertEquals("Original should have changed.", original.givenName, "Franz")
+    assertEquals("Clone should have its own objects.", clone.givenName, "Hans")
+  end
+
+  private
   def test(message = "", original, expectedResult)
     actualResult = Normalizer.normalize(original)
     assertEquals(message, actualResult, expectedResult)

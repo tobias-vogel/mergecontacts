@@ -34,7 +34,24 @@ class CardDavContact
       end
     end
 
+    # initialize undefined attributes
+    # maybe it better should stay nil...?
+    #@@attributes.each do |attribute|
+    #  if instance_variable_get("@#{attribute}").nil?()
+    #    instance_variable_set("@#{attribute}", "")
+    #  end
+    #end
+
     #TODO do something with the remaining attributes in the constructor hash (append them to notes or so)
+  end
+
+  def clone()
+    clonedAttributes = {}
+    @@attributes.each do |attribute|
+      clonedAttributes[attribute] = instance_variable_get("@#{attribute}")
+    end
+
+    return CardDavContact.new(clonedAttributes)   
   end
   
   def allAttributesSet?()
@@ -57,8 +74,31 @@ class CardDavContact
   end
 
   def mergeInOtherContact(other)
-    #todo implement
+    mergeNames(other)
+    mergeEMails(other)
+    #todo implement for other attributes
     # go over all attributes, but respect that phone numbers can be mixed around several fields
       # @@attributes.each() do |attribute| ...
+  end
+
+  private
+  def mergeNames(other)
+    if @givenName.nil?()
+      @givenName = other.givenName
+    elsif @givenName[other.givenName].nil?()
+      @givenName << " " + other.givenName
+    end
+
+    if @familyName.nil?()
+      @familyName = other.familyName
+    elsif @familyName[other.familyName].nil?()
+      @givenName << " " + other.givenName
+    end
+
+    
+  end
+
+  def mergeEMails(other)
+    # todo
   end
 end

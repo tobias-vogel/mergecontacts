@@ -34,11 +34,16 @@ class MergerTest
   end
   
   def test(mainContact, otherContact, expectedResult, message)
+puts
+puts mainContact.inspect
+puts otherContact.inspect
+    backup = otherContact.clone()
     mainContact.mergeInOtherContact(otherContact)
     assertEquals(message, mainContact, expectedResult)
     # idempotence
     mainContact.mergeInOtherContact(otherContact)
-    assertEquals(message, mainContact, expectedResult)
+    assertEquals("Idempotence: " + message, mainContact, expectedResult)
+    assertEquals("Other contact should not be modified.", otherContact, backup)
   end
 
   def testMerge()
@@ -54,6 +59,34 @@ class MergerTest
       CardDavContact.new({:givenName => "Franz"}),
       CardDavContact.new({:givenName => "Hans Franz"}),
       "Names should be appended."
+    )
+
+    test(
+      CardDavContact.new({:givenName => "Hans"}),
+      CardDavContact.new({:givenName => "Hans"}),
+      CardDavContact.new({:givenName => "Hans"}),
+      "Names should not be changed if they match."
+    )
+
+    test(
+      CardDavContact.new({:givenName => "Hans"}),
+      CardDavContact.new({:givenName => "Hans-Peter"}),
+      CardDavContact.new({:givenName => "Hans-Peter"}),
+      "The longer name should prevail."
+    )
+
+    test(
+      CardDavContact.new({:givenName => "Hans Hugo"}),
+      CardDavContact.new({:givenName => "Hans Thomas"}),
+      CardDavContact.new({:givenName => "Hans Hugo Thomas"}),
+      "The longer name should prevail."
+    )
+
+    test(
+      CardDavContact.new({:givenName => "Hans-Franz"}),
+      CardDavContact.new({:givenName => "Franz"}),
+      CardDavContact.new({:givenName => "Hans-Franz"}),
+      "Names should be appended, but not duplicated."
     )
 
     test(
