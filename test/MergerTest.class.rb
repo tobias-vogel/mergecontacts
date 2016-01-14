@@ -79,7 +79,21 @@ puts otherContact.inspect
       CardDavContact.new({:givenName => "Hans Hugo"}),
       CardDavContact.new({:givenName => "Hans Thomas"}),
       CardDavContact.new({:givenName => "Hans Hugo Thomas"}),
-      "The longer name should prevail."
+      "Concatenate all the pieces."
+    )
+
+    test(
+      CardDavContact.new({:givenName => "Hans Peter"}),
+      CardDavContact.new({:givenName => "Hans-Peter"}),
+      CardDavContact.new({:givenName => "Hans-Peter"}),
+      "Take the longer name."
+    )
+
+     test(
+      CardDavContact.new({:givenName => "Anna Annalena"}),
+      CardDavContact.new({:givenName => "Petra"}),
+      CardDavContact.new({:givenName => "Annalena Petra"}),
+      "Remove short names within the same contact."
     )
 
     test(
