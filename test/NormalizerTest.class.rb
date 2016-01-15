@@ -2,23 +2,27 @@ require_relative "../src/CardDavContact.class.rb"
 require_relative "../src/Normalizer.class.rb"
 require_relative "Test.module.rb"
 
-class CardDavContactTest
+class NormalizerTest
   include Test
 
   def run()
-    testCreateCardDavContact()
-    testClone()
-    testNormalizeCountry()
-    testNormalizeEMailAddress()
-    testNormalizePhoneNumber()
+    # todo implement own tests, usually invoked by calling CardDavContact.new
+
+    testNormalizeNames()
+
+    #testCreateCardDavContact()
+    #testClone()
+    #testNormalizeCountry()
+    #testNormalizeEMailAddress()
+    #testNormalizePhoneNumber()
+  end
+
+  def testNormalizeNames()
+    contact = CardDavContact.new({:givenName => "Anna Annalena"})
+    assertEquals("Given name should remove the shorter name.", contact.givenName, "Annalena")
   end
 
   def testCreateCardDavContact()
-
-test("nachricht", nil, nil) {|x| puts x.inspect}
-
-puts "hh"
-exit
     contact = CardDavContact.new()
     assertEquals("zip code is filled", contact.zip, nil)
 

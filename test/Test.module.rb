@@ -9,6 +9,15 @@ module Test
     printMessageAndExit(message)
   end
 
+  def test1(message = "", original, expectedResult)
+    actualResult = yield(original)
+    assertEquals(message, actualResult, expectedResult)
+
+    # test idempotence, too
+    repeatedResult = yield(actualResult)
+    assertEquals(message, repeatedResult, expectedResult)
+  end
+
   private
   def printMessageAndExit(message)
     puts("Error during test: #{message}")

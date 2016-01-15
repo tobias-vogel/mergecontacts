@@ -43,6 +43,8 @@ class CardDavContact
     #end
 
     #TODO do something with the remaining attributes in the constructor hash (append them to notes or so)
+
+    normalize()
   end
 
   def clone()
@@ -106,6 +108,10 @@ class CardDavContact
     return main
   end
 
+  def normalize()
+    Normalizer.normalize(self)
+  end
+
   def removeSubstringNames(names)
     # iterate over each name
     # if it is a substring of another, remove it
@@ -135,6 +141,8 @@ class CardDavContact
   end
 
   def mergeNames(other)
+puts @givenName
+puts other.givenName
     if @givenName.nil?()
       @givenName = other.givenName
     elsif @givenName[other.givenName].nil?()

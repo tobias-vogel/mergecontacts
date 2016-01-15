@@ -40,6 +40,7 @@ puts otherContact.inspect
     backup = otherContact.clone()
     mainContact.mergeInOtherContact(otherContact)
     assertEquals(message, mainContact, expectedResult)
+
     # idempotence
     mainContact.mergeInOtherContact(otherContact)
     assertEquals("Idempotence: " + message, mainContact, expectedResult)
@@ -94,6 +95,13 @@ puts otherContact.inspect
       CardDavContact.new({:givenName => "Petra"}),
       CardDavContact.new({:givenName => "Annalena Petra"}),
       "Remove short names within the same contact."
+    )
+
+     test(
+      CardDavContact.new({:givenName => "Anna Annalena"}),
+      CardDavContact.new(),
+      CardDavContact.new({:givenName => "Annalena"}),
+      "Merging should normalize substring names."
     )
 
     test(
