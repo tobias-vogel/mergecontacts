@@ -14,7 +14,7 @@ class TabularDataSource < DataSource
   end
 
   #TODO ensure that this class should not be directly instantiable
-  
+
   private
   def initialize(separator, filename)
     @separator = separator
@@ -43,10 +43,10 @@ class TabularDataSource < DataSource
 
   def parseIntoContacts(content)
     contacts = []
-#    CSV.foreach(filename) do |row|
-#      contact = parseRow row, header
-#      contacts.add contact
-#    end
+    #    CSV.foreach(filename) do |row|
+    #      contact = parseRow row, header
+    #      contacts.add contact
+    #    end
     return contacts
   end
 end

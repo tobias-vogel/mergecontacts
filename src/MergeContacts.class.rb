@@ -13,11 +13,11 @@ class MergeContacts
     end
     @filenames = filenames
   end
-  
+
   def run
     #TODO for conflict resolution during merging, it is good to define a main contact file and merge in all other information
     loadAndClenseContactsFromFiles()
-    mergeContacts()
+    coordinateMerge()
     exportContactsToTsv()
     puts "Finished."
   end
@@ -51,9 +51,9 @@ class MergeContacts
   end
 
   def mergeContacts()
-    @mainContacts = Merger.mergeContacts(@mainContacts, @otherContactSets)
+    @mainContacts = Merger.coordinateMerge(@mainContacts, @otherContactSets)
   end
-  
+
   def exportContactsToTsv()
     # todo
   end
