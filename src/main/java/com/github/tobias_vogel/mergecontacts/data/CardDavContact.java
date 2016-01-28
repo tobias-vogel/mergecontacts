@@ -3,7 +3,7 @@ package com.github.tobias_vogel.mergecontacts.data;
 import java.util.HashMap;
 import java.util.Map;
 
-class CardDavContact {
+public class CardDavContact {
 
     enum CardDavContactAttributes {
         GIVEN_NAME, FAMILY_NAME, NICKNAME, MAIL, WORK_PHONE, HOME_PHONE, FAX, PAGER, MOBILE_PHONE, STREET, STATE, ZIP, COUNTRY, TITLE, ORGANIZATIONAL_UNIT, ORGANIZATION, YEAR, MONTH, DAY, NOTES
