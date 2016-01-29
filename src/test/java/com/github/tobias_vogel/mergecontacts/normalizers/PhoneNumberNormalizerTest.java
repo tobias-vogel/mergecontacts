@@ -1,21 +1,19 @@
 package com.github.tobias_vogel.mergecontacts.normalizers;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.junit.Assert;
 import org.junit.Test;
 
 import com.github.tobias_vogel.mergecontacts.data.CardDavContact;
 import com.github.tobias_vogel.mergecontacts.data.CardDavContact.CardDavContactAttributes;
+import com.google.common.collect.ImmutableMap;
 
 public class PhoneNumberNormalizerTest {
 
     @Test
     public void testDoNothing() {
-        Map<CardDavContactAttributes, String> params = new HashMap<>();
-        params.put(CardDavContactAttributes.WORK_PHONE, "001234567");
-        CardDavContact contact = new CardDavContact(params);
+        CardDavContact contact = new CardDavContact(
+                new ImmutableMap.Builder<CardDavContact.CardDavContactAttributes, String>()
+                        .put(CardDavContactAttributes.WORK_PHONE, "001234567").build());
         Assert.assertEquals("001234567", contact.getAttributeValue(CardDavContactAttributes.WORK_PHONE));
     }
 
@@ -25,9 +23,9 @@ public class PhoneNumberNormalizerTest {
 
     @Test
     public void testAddCountryCodeToSimpleNumber() {
-        Map<CardDavContactAttributes, String> params = new HashMap<>();
-        params.put(CardDavContactAttributes.WORK_PHONE, "01234567");
-        CardDavContact contact = new CardDavContact(params);
+        CardDavContact contact = new CardDavContact(
+                new ImmutableMap.Builder<CardDavContact.CardDavContactAttributes, String>()
+                        .put(CardDavContactAttributes.WORK_PHONE, "01234567").build());
         Assert.assertEquals("00491234567", contact.getAttributeValue(CardDavContactAttributes.WORK_PHONE));
     }
 
@@ -37,9 +35,9 @@ public class PhoneNumberNormalizerTest {
 
     @Test
     public void testAddCountryCodeToPlusNumber() {
-        Map<CardDavContactAttributes, String> params = new HashMap<>();
-        params.put(CardDavContactAttributes.WORK_PHONE, "+491234567");
-        CardDavContact contact = new CardDavContact(params);
+        CardDavContact contact = new CardDavContact(
+                new ImmutableMap.Builder<CardDavContact.CardDavContactAttributes, String>()
+                        .put(CardDavContactAttributes.WORK_PHONE, "+491234567").build());
         Assert.assertEquals("00491234567", contact.getAttributeValue(CardDavContactAttributes.WORK_PHONE));
     }
 
@@ -49,9 +47,9 @@ public class PhoneNumberNormalizerTest {
 
     @Test
     public void testDoNotAddCountryCodeToStrangeNumber() {
-        Map<CardDavContactAttributes, String> params = new HashMap<>();
-        params.put(CardDavContactAttributes.WORK_PHONE, "1234567");
-        CardDavContact contact = new CardDavContact(params);
+        CardDavContact contact = new CardDavContact(
+                new ImmutableMap.Builder<CardDavContact.CardDavContactAttributes, String>()
+                        .put(CardDavContactAttributes.WORK_PHONE, "1234567").build());
         Assert.assertEquals("1234567", contact.getAttributeValue(CardDavContactAttributes.WORK_PHONE));
     }
 
@@ -61,9 +59,9 @@ public class PhoneNumberNormalizerTest {
 
     @Test
     public void testRemoveSpecialCharacters() {
-        Map<CardDavContactAttributes, String> params = new HashMap<>();
-        params.put(CardDavContactAttributes.WORK_PHONE, "(012) 34-56/78");
-        CardDavContact contact = new CardDavContact(params);
+        CardDavContact contact = new CardDavContact(
+                new ImmutableMap.Builder<CardDavContact.CardDavContactAttributes, String>()
+                        .put(CardDavContactAttributes.WORK_PHONE, "(012) 34-56/78").build());
         Assert.assertEquals("004912345678", contact.getAttributeValue(CardDavContactAttributes.WORK_PHONE));
     }
 
@@ -73,13 +71,14 @@ public class PhoneNumberNormalizerTest {
 
     @Test
     public void testNormalizeAllNumbers() {
-        Map<CardDavContactAttributes, String> params = new HashMap<>();
-        params.put(CardDavContactAttributes.WORK_PHONE, "01234567");
-        params.put(CardDavContactAttributes.HOME_PHONE, "01234567");
-        params.put(CardDavContactAttributes.MOBILE_PHONE, "01234567");
-        params.put(CardDavContactAttributes.FAX, "01234567");
-        params.put(CardDavContactAttributes.PAGER, "01234567");
-        CardDavContact contact = new CardDavContact(params);
+        CardDavContact contact = new CardDavContact(
+                new ImmutableMap.Builder<CardDavContact.CardDavContactAttributes, String>()
+                        .put(CardDavContactAttributes.WORK_PHONE, "01234567")
+                        .put(CardDavContactAttributes.HOME_PHONE, "01234567")
+                        .put(CardDavContactAttributes.MOBILE_PHONE, "01234567")
+                        .put(CardDavContactAttributes.FAX, "01234567").put(CardDavContactAttributes.PAGER, "01234567")
+                        .build());
+
         Assert.assertEquals("00491234567", contact.getAttributeValue(CardDavContactAttributes.WORK_PHONE));
         Assert.assertEquals("00491234567", contact.getAttributeValue(CardDavContactAttributes.HOME_PHONE));
         Assert.assertEquals("00491234567", contact.getAttributeValue(CardDavContactAttributes.MOBILE_PHONE));
