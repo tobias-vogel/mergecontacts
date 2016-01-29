@@ -3,9 +3,11 @@ package com.github.tobias_vogel.mergecontacts.data;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.github.tobias_vogel.mergecontacts.normalizers.Normalizer;
+
 public class CardDavContact {
 
-    enum CardDavContactAttributes {
+    public enum CardDavContactAttributes {
         GIVEN_NAME, FAMILY_NAME, NICKNAME, MAIL, WORK_PHONE, HOME_PHONE, FAX, PAGER, MOBILE_PHONE, STREET, STATE, ZIP, COUNTRY, TITLE, ORGANIZATIONAL_UNIT, ORGANIZATION, YEAR, MONTH, DAY, NOTES
     }
 
@@ -124,7 +126,7 @@ public class CardDavContact {
 
 
     public void normalize() {
-        // Normalizer.normalize(this);
+        Normalizer.normalize(this);
     }
 
 
@@ -133,6 +135,14 @@ public class CardDavContact {
 
     public String getAttributeValue(CardDavContactAttributes attributeKey) {
         return attributes.get(attributeKey);
+    }
+
+
+
+
+
+    public void setAttributeValue(CardDavContactAttributes attributeName, String attributeValue) {
+        attributes.put(attributeName, attributeValue);
     }
 
     // TODO belongs into normalizer

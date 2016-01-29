@@ -66,43 +66,6 @@ class NormalizerTest
     assertEquals("Not all attributes are set.", contact.allAttributesSet?, true)
     end
 
-  def testNormalizePhoneNumber()
-    test(
-      "Phone normalization did something when nothing was expected.",
-      CardDavContact.new({:mobilephone => "0049123456"}),
-      CardDavContact.new({:mobilephone => "0049123456", :country => "Deutschland"})
-    )
-
-    test(
-      "Prepending international pre-dialing did not work.",
-      CardDavContact.new({:mobilephone => "0123456"}),
-      CardDavContact.new({:mobilephone => "0049123456", :country => "Deutschland"})
-    )
-
-    test(
-      "Special characters were not removed.",
-      CardDavContact.new({:mobilephone => "(012) 34-56"}),
-      CardDavContact.new({:mobilephone => "0049123456", :country => "Deutschland"})
-    )
-
-    test(
-      "+ in pre-dialing was not removed.",
-      CardDavContact.new({:mobilephone => "+49 123 456"}),
-      CardDavContact.new({:mobilephone => "0049123456", :country => "Deutschland"})
-    )
-
-    test(
-      "Not all phone numbers were normalized.",
-      CardDavContact.new({:workphone => "0123", :homephone => "0123", :fax => "0123", :pager => "0123", :mobilephone => "0123"}),
-      CardDavContact.new({:workphone => "0049123", :homephone => "0049123", :fax => "0049123", :pager => "0049123", :mobilephone => "0049123", :country => "Deutschland"})
-    )
-
-    test(
-      "Strange phone numbers were touched.",
-      CardDavContact.new({:workphone => "123"}),
-      CardDavContact.new({:workphone => "123", :country => "Deutschland"})
-    )
-  end
   
   def testNormalizeEMailAddress()
     test(
