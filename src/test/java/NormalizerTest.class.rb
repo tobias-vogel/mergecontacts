@@ -66,14 +66,6 @@ class NormalizerTest
     assertEquals("Not all attributes are set.", contact.allAttributesSet?, true)
     end
 
-  
-  def testNormalizeEMailAddress()
-    test(
-      "E-mail normalization did not work.",
-      CardDavContact.new({:mail => "Ab.Cd@mail.com"}),
-      CardDavContact.new({:mail => "ab.cd@mail.com", :country => "Deutschland"})
-    )
-  end
 
   def testNormalizeCountry()
     test(

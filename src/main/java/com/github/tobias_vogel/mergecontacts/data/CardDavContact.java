@@ -145,6 +145,14 @@ public class CardDavContact {
         attributes.put(attributeName, attributeValue);
     }
 
+
+
+
+
+    public boolean hasAttribute(CardDavContactAttributes numberAttribute) {
+        return attributes.containsKey(numberAttribute);
+    }
+
     // TODO belongs into normalizer
     // def removeSubstringNames(names)
     // # iterate over each name

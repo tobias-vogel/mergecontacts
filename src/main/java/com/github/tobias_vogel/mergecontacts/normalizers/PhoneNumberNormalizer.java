@@ -7,14 +7,20 @@ public class PhoneNumberNormalizer {
 
     public static void normalize(CardDavContact contact) {
 
+        if (contact == null) {
+            return;
+        }
+
         CardDavContactAttributes[] numberAttributes = { CardDavContactAttributes.WORK_PHONE,
                 CardDavContactAttributes.HOME_PHONE, CardDavContactAttributes.FAX, CardDavContactAttributes.PAGER,
                 CardDavContactAttributes.MOBILE_PHONE };
         // TODO use java8 lamda magic here (?)
         for (CardDavContactAttributes numberAttribute : numberAttributes) {
-            String number = contact.getAttributeValue(numberAttribute);
-            String normalizedNumber = normalizePhoneNumber(number);
-            contact.setAttributeValue(numberAttribute, normalizedNumber);
+            if (contact.hasAttribute(numberAttribute)) {
+                String number = contact.getAttributeValue(numberAttribute);
+                String normalizedNumber = normalizePhoneNumber(number);
+                contact.setAttributeValue(numberAttribute, normalizedNumber);
+            }
         }
 
     }

@@ -1,5 +1,8 @@
 package com.github.tobias_vogel.mergecontacts.normalizers;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -15,6 +18,29 @@ public class PhoneNumberNormalizerTest {
                 new ImmutableMap.Builder<CardDavContact.CardDavContactAttributes, String>()
                         .put(CardDavContactAttributes.WORK_PHONE, "001234567").build());
         Assert.assertEquals("001234567", contact.getAttributeValue(CardDavContactAttributes.WORK_PHONE));
+    }
+
+
+
+
+
+    @Test
+    public void testWithNull() {
+        CardDavContact contact = null;
+        PhoneNumberNormalizer.normalize(contact);
+        Assert.assertNull(contact);
+    }
+
+
+
+
+
+    @Test
+    public void testWithNullNumber() {
+        Map<CardDavContactAttributes, String> params = new HashMap<>();
+        params.put(CardDavContactAttributes.WORK_PHONE, null);
+        CardDavContact contact = new CardDavContact(params);
+        Assert.assertNull(contact.getAttributeValue(CardDavContactAttributes.WORK_PHONE));
     }
 
 
