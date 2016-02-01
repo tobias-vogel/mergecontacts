@@ -17,55 +17,6 @@ class NormalizerTest
     #testNormalizePhoneNumber()
   end
 
-  def testNormalizeNames()
-    contact = CardDavContact.new({:givenName => "Anna Annalena"})
-    assertEquals("Given name should remove the shorter name.", contact.givenName, "Annalena")
-  end
-
-  def testCreateCardDavContact()
-    contact = CardDavContact.new()
-    assertEquals("zip code is filled", contact.zip, nil)
-
-    contact = CardDavContact.new({:mobilephone => "0049123456"})
-    assertEquals("mobilephone not set properly", contact.mobilephone, "0049123456")
-    assertEquals("zip code is filled", contact.zip, nil)
-
-    begin
-      contact = CardDavContact.new({:abcxyz => "does not exist"})
-      fail("An unknown key could be added.")
-    rescue NameError
-      # expected
-    end
-
-    # not required due to a warning when including this file
-    # contact = CardDavContact.new({:zip => "b", :zip => "a"})
-    # assertEquals(contact.zip, "a")
-
-    contact = CardDavContact.new({
-      :givenName => "gn",
-      :familyName => "fn",
-      :nickname => "nn",
-      :mail => "ml",
-      :workphone => "wp",
-      :homephone => "hp",
-      :fax => "f",
-      :pager => "p",
-      :mobilephone => "mp",
-      :street => "st",
-      :state => "se",
-      :zip => "z",
-      :country => "c",
-      :title => "t",
-      :organizationalUnit => "oa",
-      :organization => "o",
-      :year => "y",
-      :month => "m",
-      :day => "d",
-      :notes => "n"
-    })
-    assertEquals("Not all attributes are set.", contact.allAttributesSet?, true)
-    end
-
 
   def testNormalizeCountry()
     test(

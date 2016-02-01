@@ -1,45 +1,121 @@
 package com.github.tobias_vogel.mergecontacts.normalizers;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+
 import com.github.tobias_vogel.mergecontacts.data.CardDavContact;
+import com.github.tobias_vogel.mergecontacts.data.CardDavContact.CardDavContactAttributes;
+import com.google.common.base.Joiner;
 
 public class NameNormalizer {
 
     public static void normalize(CardDavContact contact) {
-        // TODO Auto-generated method stub
+        if (contact == null) {
+            return;
+        }
 
+        Collection<CardDavContactAttributes> nameFields = new HashSet<>(
+                Arrays.asList(CardDavContactAttributes.GIVEN_NAME, CardDavContactAttributes.FAMILY_NAME,
+                        CardDavContactAttributes.NICKNAME));
+
+        for (CardDavContactAttributes nameField : nameFields) {
+            if (contact.hasAttribute(nameField)) {
+                String name = contact.getAttributeValue(nameField);
+                String normalizedName = normalizeName(name);
+                contact.setAttributeValue(nameField, normalizedName);
+            }
+        }
     }
-    // def Normalizer.normalizeNames(contact)
-    // [contact.givenName, contact.familyName, contact.nickname].each() do
-    // |name|
-    // if !name.nil?()
-    // parts = name.split(" ")
-    // name = removeSubstringNames(parts)
-    // end
-    // end
-    // end
-    //
-    // def Normalizer.removeSubstringNames(names)
-    // # iterate over each name
-    // # if it is a substring of another, remove it
-    // # if another name is a substring of the current name, remove the other
-    // name
-    //
-    // survivingNames = []
-    //
-    // until names.empty?() do
-    // current = names.shift()
-    //
-    // # remove all names that are substrings of the current one
-    // names.delete_if() {|name| isSubname(name, current)}
-    //
-    // # keep the current unless it is a substring of the remaining names
-    // matches = names.collect() {|name| isSubname(current, name)}
-    // if !matches.member?(true)
-    // survivingNames << current
-    // end
-    // end
-    //
-    // return survivingNames
-    // end
-    // end
+
+
+
+
+
+    private static String normalizeName(String name) {
+        List<String> names = tokenizeName(name);
+        discardSubstringNames(names);
+        String normalizedName = joinTokens(names);
+        return normalizedName;
+    }
+
+
+
+
+
+    private static String joinTokens(List<String> tokens) {
+        return Joiner.on(' ').join(tokens);
+    }
+
+
+
+
+
+    /**
+     * This method iterates through the names and removes names that are
+     * prefixes of other names. The order is preserved.
+     * 
+     * @param names
+     *            a list of names
+     */
+    private static void discardSubstringNames(List<String> names) {
+        List<String> survivingNames = new ArrayList<>();
+
+        do {
+            String currentName = names.remove(0);
+
+            if (currentNameIsRealPrefixOfAnyOtherName(currentName, names)) {
+                // ignore this name, don't move it to the surviving names
+                continue;
+            }
+
+            removeNamesThatArePrefixesOrEqualToCurrentName(currentName, names);
+
+            survivingNames.add(currentName);
+        } while (!names.isEmpty());
+
+        names.clear();
+        names.addAll(survivingNames);
+    }
+
+
+
+
+
+    private static void removeNamesThatArePrefixesOrEqualToCurrentName(String currentName, List<String> names) {
+        for (int index = names.size() - 1; index >= 0; index--) {
+            String prefixCandidate = names.get(index);
+            if (currentName.startsWith(prefixCandidate)) {
+                names.remove(index);
+            }
+        }
+    }
+
+
+
+
+
+    private static boolean currentNameIsRealPrefixOfAnyOtherName(String currentName, List<String> otherNames) {
+        for (String otherName : otherNames) {
+            if (otherName.equals(currentName)) {
+                continue;
+            }
+
+            if (otherName.startsWith(currentName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+
+
+
+    private static List<String> tokenizeName(String name) {
+        List<String> tokens = new ArrayList<>(Arrays.asList(name.split(" ")));
+        return tokens;
+    }
 }
