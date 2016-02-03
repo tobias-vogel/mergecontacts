@@ -11,20 +11,6 @@ public class CardDavContact {
         GIVEN_NAME, FAMILY_NAME, NICKNAME, MAIL, WORK_PHONE, HOME_PHONE, FAX, PAGER, MOBILE_PHONE, STREET, STATE, ZIP, COUNTRY, TITLE, ORGANIZATIONAL_UNIT, ORGANIZATION, YEAR, MONTH, DAY, NOTES
     }
 
-    // public static Set<String> ATTRIBUTES = new
-    // HashSet<>(Arrays.asList("givenName", "familyName", "nickname", "mail",
-    // "workphone", "homephone", "fax", "pager", "mobilephone", "street",
-    // "state", "zip", "country", "title",
-    // "organizationalUnit", "organization", "year", "month", "day", "notes"));
-
-    // TODO transform attributes into separate static final fields that are
-    // visible to the outside world
-    // then add a method that uses reflection to verify that a provided
-    // attribute key is acutually among these attributes
-
-    // maybe create an (internally, public) enum that contains these fields
-    // (without values)
-
     private Map<CardDavContactAttributes, String> attributes;
 
 
@@ -153,52 +139,6 @@ public class CardDavContact {
         return attributes.containsKey(numberAttribute);
     }
 
-    // TODO belongs into normalizer
-    // def removeSubstringNames(names)
-    // # iterate over each name
-    // # if it is a substring of another, remove it
-    // # if another name is a substring of the current name, remove the other
-    // name
-    //
-    // survivingNames = []
-    //
-    // until names.empty?() do
-    // current = names.shift()
-    //
-    // # remove all names that are substrings of the current one
-    // names.
-    //
-    //
-    //
-    //
-    //
-    // delete_if() {|name| isSubname(name, current)}
-    //
-    // #
-    //
-    // keep the
-    // current unless
-    // it is
-    // a substring
-    // of the
-    // remaining names matches=names.
-    //
-    //
-    // collect() {|name| isSubname(current,
-    // name)}if!matches.member?(true)survivingNames<<
-    // current
-    // end end
-
-    // return
-    // survivingNames
-    // end
-
-    // def isSubname(subname, name)
-    // match = name[subname]
-    // return match.nil?()
-    // end
-    //
-
     // def mergeNames(other)
     // puts @givenName
     // puts other.givenName
@@ -229,4 +169,200 @@ public class CardDavContact {
     // def mergeEMails(other)
     // # todo
     // end
+
+    static class Builder {
+        private Map<CardDavContactAttributes, String> params = new HashMap<>(CardDavContactAttributes.values().length);
+
+        //
+        // public Builder() {
+        // }
+
+
+
+
+
+        public CardDavContact build() {
+            return new CardDavContact(params);
+        }
+
+
+
+
+
+        public Builder gname(String newGivenName) {
+            params.put(CardDavContactAttributes.GIVEN_NAME, newGivenName);
+            return this;
+        }
+
+
+
+
+
+        public Builder fname(String newFamilyName) {
+            params.put(CardDavContactAttributes.FAMILY_NAME, newFamilyName);
+            return this;
+        }
+
+
+
+
+
+        public Builder nname(String newNickname) {
+            params.put(CardDavContactAttributes.NICKNAME, newNickname);
+            return this;
+        }
+
+
+
+
+
+        public Builder mail(String newMail) {
+            params.put(CardDavContactAttributes.MAIL, newMail);
+            return this;
+        }
+
+
+
+
+
+        public Builder wphone(String newWorkPhone) {
+            params.put(CardDavContactAttributes.WORK_PHONE, newWorkPhone);
+            return this;
+        }
+
+
+
+
+
+        public Builder hphone(String newHomePhone) {
+            params.put(CardDavContactAttributes.HOME_PHONE, newHomePhone);
+            return this;
+        }
+
+
+
+
+
+        public Builder fax(String newFax) {
+            params.put(CardDavContactAttributes.FAX, newFax);
+            return this;
+        }
+
+
+
+
+
+        public Builder pager(String newPager) {
+            params.put(CardDavContactAttributes.PAGER, newPager);
+            return this;
+        }
+
+
+
+
+
+        public Builder mphone(String newMobilePhone) {
+            params.put(CardDavContactAttributes.MOBILE_PHONE, newMobilePhone);
+            return this;
+        }
+
+
+
+
+
+        public Builder street(String newStreet) {
+            params.put(CardDavContactAttributes.STREET, newStreet);
+            return this;
+        }
+
+
+
+
+
+        public Builder state(String newState) {
+            params.put(CardDavContactAttributes.STATE, newState);
+            return this;
+        }
+
+
+
+
+
+        public Builder zip(String newZipCode) {
+            params.put(CardDavContactAttributes.ZIP, newZipCode);
+            return this;
+        }
+
+
+
+
+
+        public Builder country(String newCountry) {
+            params.put(CardDavContactAttributes.COUNTRY, newCountry);
+            return this;
+        }
+
+
+
+
+
+        public Builder title(String newTitle) {
+            params.put(CardDavContactAttributes.TITLE, newTitle);
+            return this;
+        }
+
+
+
+
+
+        public Builder orgUnit(String newOrganizationalUnit) {
+            params.put(CardDavContactAttributes.ORGANIZATIONAL_UNIT, newOrganizationalUnit);
+            return this;
+        }
+
+
+
+
+
+        public Builder org(String newOrganization) {
+            params.put(CardDavContactAttributes.ORGANIZATION, newOrganization);
+            return this;
+        }
+
+
+
+
+
+        public Builder year(String newYear) {
+            params.put(CardDavContactAttributes.YEAR, newYear);
+            return this;
+        }
+
+
+
+
+
+        public Builder month(String newMonth) {
+            params.put(CardDavContactAttributes.MONTH, newMonth);
+            return this;
+        }
+
+
+
+
+
+        public Builder day(String newDay) {
+            params.put(CardDavContactAttributes.DAY, newDay);
+            return this;
+        }
+
+
+
+
+
+        public Builder notes(String newNotes) {
+            params.put(CardDavContactAttributes.NOTES, newNotes);
+            return this;
+        }
+    }
 }

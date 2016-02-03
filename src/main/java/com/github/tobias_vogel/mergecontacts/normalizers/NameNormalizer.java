@@ -35,6 +35,9 @@ public class NameNormalizer {
 
 
     private static String normalizeName(String name) {
+        if (name == null) {
+            return name;
+        }
         List<String> names = tokenizeName(name);
         discardSubstringNames(names);
         String normalizedName = joinTokens(names);
