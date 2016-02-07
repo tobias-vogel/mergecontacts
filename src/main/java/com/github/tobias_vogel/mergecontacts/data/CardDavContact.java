@@ -5,13 +5,15 @@ import java.util.Map;
 
 import com.github.tobias_vogel.mergecontacts.normalizers.Normalizer;
 
-public class CardDavContact {
+public class CardDavContact implements Cloneable {
 
     public enum CardDavContactAttributes {
         GIVEN_NAME, FAMILY_NAME, NICKNAME, MAIL, WORK_PHONE, HOME_PHONE, FAX, PAGER, MOBILE_PHONE, STREET, STATE, ZIP, COUNTRY, TITLE, ORGANIZATIONAL_UNIT, ORGANIZATION, YEAR, MONTH, DAY, NOTES
     }
 
     private Map<CardDavContactAttributes, String> attributes;
+
+    private static final char REPLACEMENT_CHARACTER = '-';
 
 
 
@@ -164,11 +166,69 @@ public class CardDavContact {
     // end
     //
 
+
+
+
+
     //
     //
     // def mergeEMails(other)
     // # todo
     // end
+
+    public CardDavContact clone() {
+        // TODO remove this method? (and the clone interface implementation?)
+        return null;
+    }
+
+
+
+
+
+    /**
+     * Calculates a key for a given string value. The key is the first two
+     * characters. If the provided string is shorter or null, replacement
+     * characters are used.
+     * 
+     * @param attributeValue
+     *            the string to generate the key for
+     * @return the key for the provided string
+     */
+    private String generateKeyPart(String attributeValue) {
+        String key;
+        if (attributeValue == null) {
+            key = "";
+        } else {
+            key = attributeValue;
+        }
+
+        attributeValue += REPLACEMENT_CHARACTER;
+        attributeValue += REPLACEMENT_CHARACTER;
+
+        key = key.substring(0, 2);
+
+        return key;
+    }
+
+
+
+
+
+    public String generateKey() {
+        // We need a simple key that does not create false positives and false
+        // negatives. Thus, the key may neither be too relaxed (only country[0])
+        // nor too strict (all attributes). We assume the data to be relatively
+        // clean and to contain mainly person data.
+        // Therefore, we take the first two characters from the given, family
+        // name and the city, hoping that all attributes are usually set
+        // correctly and that this is unique enough.
+
+        String key = "";
+        key += generateKeyPart(getAttributeValue(CardDavContactAttributes.GIVEN_NAME));
+        key += generateKeyPart(getAttributeValue(CardDavContactAttributes.FAMILY_NAME));
+        // TODO add city?
+        return key;
+    }
 
     static class Builder {
         private Map<CardDavContactAttributes, String> params = new HashMap<>(CardDavContactAttributes.values().length);

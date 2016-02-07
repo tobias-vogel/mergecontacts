@@ -1,10 +1,19 @@
 package com.github.tobias_vogel.mergecontacts;
 
+import java.util.Set;
+
+import com.github.tobias_vogel.mergecontacts.data.CardDavContact;
+import com.github.tobias_vogel.mergecontacts.merging.Merger;
+
 class MergeContacts {
+
+    private static String mainContactFilename;
+
+    private static Set<CardDavContact> mainContacts;
 
     private static String[] additionalContactsFilenames;
 
-    private static String mainContactFilename;
+    private static Set<CardDavContact> additionalContacts;
 
 
 
@@ -93,8 +102,7 @@ class MergeContacts {
 
 
     private static void mergeContacts() {
-        // @mainContacts = Merger.coordinateMerge(@mainContacts,
-        // @otherContactSets)
+        mainContacts = Merger.coordinateMerge(mainContacts, additionalContacts);
     }
 
 
