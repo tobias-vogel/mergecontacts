@@ -1,132 +1,160 @@
 package com.github.tobias_vogel.mergecontacts.merging;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import com.github.tobias_vogel.mergecontacts.data.CardDavContact;
-import com.github.tobias_vogel.mergecontacts.utils.Utils;
-import com.google.common.collect.Sets;
+import com.github.tobias_vogel.mergecontacts.data.CardDavContact.CardDavContactAttributes;
 
 public class Merger {
 
-    public static Set<CardDavContact> coordinateMerge(Set<CardDavContact> mainContacts,
-            Set<CardDavContact> additionalContacts) {
+    private static void mergeThroughReplacement(CardDavContactAttributes familyName, CardDavContact otherContact) {
+        // TODO Auto-generated method stub
 
-        Map<String, Set<CardDavContact>> mainContactsIndex = createName2ContactsIndex(mainContacts);
-        Map<String, Set<CardDavContact>> additionalContactsIndex = createName2ContactsIndex(additionalContacts);
-
-        Set<List<CardDavContact>> contactGroups = mergeIndexes(mainContactsIndex, additionalContactsIndex);
-
-        Set<CardDavContact> mergedContacts = mergeContactGroups(contactGroups);
-
-        return mergedContacts;
     }
 
 
 
 
 
-    private static Set<CardDavContact> mergeContactGroups(Set<List<CardDavContact>> contactGroups) {
-        // TODO use java8 magic
-        Set<CardDavContact> mergedContacts = new HashSet<CardDavContact>(contactGroups.size());
+    private static void mergeThroughAppending(CardDavContactAttributes attribute, CardDavContact otherContact) {
 
-        for (List<CardDavContact> contactGroup : contactGroups) {
-            Iterator<CardDavContact> contactIterator = contactGroup.iterator();
+        // TODO merge through appending
+    }
 
-            // take the first contact
-            CardDavContact mergedContact = contactIterator.next().clone();
 
-            // merge in all further contacts
-            while (contactIterator.hasNext()) {
-                CardDavContact additionalContact = contactIterator.next();
-                mergedContact.mergeInOtherContact(additionalContact);
-            }
 
-            mergedContacts.add(mergedContact);
+
+
+    private static boolean mergeAttributeSimpleIfPossible(CardDavContactAttributes attribute,
+            CardDavContact otherContact) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+
+
+
+
+    public static void enrichContactWithOtherContact(CardDavContact contact, CardDavContact otherContact) {
+        enrichNames(contact, otherContact);
+        enrichEMails(contact, otherContact);
+        enrichPhoneNumbers(contact, otherContact);
+        // TODO and so on...
+    }
+
+
+
+
+
+    private static void enrichPhoneNumbers(CardDavContact contact, CardDavContact otherContact) {
+        // TODO Auto-generated method stub
+        // respect that phone numbers can be mixed
+        // around several fields
+    }
+
+
+
+
+
+    private static void enrichEMails(CardDavContact contact, CardDavContact otherContact) {
+        // TODO Auto-generated method stub
+
+    }
+
+
+
+
+
+    private static void enrichNames(CardDavContact contact, CardDavContact otherContact) {
+        mergeThroughAppending(contact, otherContact, CardDavContactAttributes.GIVEN_NAME);
+        mergeThroughAppending(contact, otherContact, CardDavContactAttributes.NICKNAME);
+        mergeThroughReplacement(contact, otherContact, CardDavContactAttributes.FAMILY_NAME);
+
+        // def mergeNames(other)
+        // puts @givenName
+        // puts other.givenName
+        // if @givenName.nil?()
+        // @givenName = other.givenName
+        // elsif @givenName[other.givenName].nil?()
+        // @givenName << " " + other.givenName
+        // end
+        //
+        // @givenName = mergeNamesSmart(@givenName, other.givenName)
+        // # das soll er machen:
+        // # die namen des zweiten
+        // tokenisieren (an leerzeichen) und die neuen teile an den hauptnamen
+        // anhängen
+        //
+        // # if @familyName.nil?()
+        // # @familyName = other.familyName
+        // # elsif @familyName[other.familyName].nil?()
+        // # @givenName << " " + other.givenName
+        // # end
+
+    }
+
+
+
+
+
+    private static void mergeThroughReplacement(CardDavContact contact, CardDavContact otherContact,
+            CardDavContactAttributes attribute) {
+        if (mergeAttributeSimpleIfPossible(contact, otherContact, attribute)) {
+            return;
         }
+
+        // check in the notes section, whether one of the values is known for
+        // being old
+        // contactNotes
 
         // TODO Auto-generated method stub
-        //
-        // # merge the remaining other contacts together
-        // otherContactsIndex.each_value() do |otherContactSet|
-        // # use the first of the other contacts as main contact
-        // mainContact = otherContactSet.shift()
-        // otherContacts = otherContactSet
-        // mainContact = Merger.mergeOtherContactsIntoMainContact(mainContact,
-        // otherContacts)
-        // mergedContacts << mainContact
-        // end
-        // return mergedContacts = nil
-        // end
-        //
-        // def Merger.mergeOtherContactsIntoMainContact(mainContact,
-        // otherContacts)
-        // if otherContacts.nil?()
-        // # No other contact set contained contacts for this key. Do not merge
-        // anything.
-        // else
-        // # Merge all other contacts into main contact.
-        // otherContacts.each() do |otherContact|
-        // mainContact.mergeInOtherContact(otherContact)
-        // end
-        // end
-        // return mainContact
-        // end
-        //
-        //
-        // end
-        return null;
+
     }
 
 
 
 
 
-    private static Set<List<CardDavContact>> mergeIndexes(Map<String, Set<CardDavContact>> mainContactsIndex,
-            Map<String, Set<CardDavContact>> additionalContactsIndex) {
-
-        // collect keys
-        Collection<String> allKeys = Sets.union(mainContactsIndex.keySet(), additionalContactsIndex.keySet());
-
-        Set<List<CardDavContact>> result = new HashSet<>(allKeys.size());
-
-        for (String key : allKeys) {
-            List<CardDavContact> contacts = new ArrayList<>();
-
-            if (mainContactsIndex.containsKey(key)) {
-                contacts.addAll(mainContactsIndex.get(key));
-            }
-
-            if (additionalContactsIndex.containsKey(key)) {
-                contacts.addAll(additionalContactsIndex.get(key));
-            }
-
-            result.add(contacts);
+    private static void mergeThroughAppending(CardDavContact contact, CardDavContact otherContact,
+            CardDavContactAttributes attribute) {
+        if (mergeAttributeSimpleIfPossible(contact, otherContact, attribute)) {
+            return;
         }
-        return result;
+
+        String contactValue = contact.getAttributeValue(attribute);
+        String otherContactValue = otherContact.getAttributeValue(attribute);
+
+        String mergedValue = contactValue + " " + otherContactValue;
+
+        contact.setAttributeValue(attribute, mergedValue);
     }
 
 
 
 
 
-    private static Map<String, Set<CardDavContact>> createName2ContactsIndex(Set<CardDavContact> contacts) {
-        Map<String, Set<CardDavContact>> index = new HashMap<>(contacts.size());
-
-        // TODO use java 8 lambda magic?
-        // contacts.parallelStream().map(mapper)stream().map
-        for (CardDavContact contact : contacts) {
-            String key = contact.generateKey();
-
-            Utils.failsafeMapAppend(index, key, contact);
+    /**
+     * Merges the corresponding attribute values of the provided contacts unless
+     * both are not <code>null</code>.
+     * 
+     * @param contact
+     *            the contact to update
+     * @param otherContact
+     *            the contact to get additional data for
+     * @param attribute
+     *            the contact attribute to get the values for
+     * @return <code>true</code> if a simple merge has been done (one or both
+     *         attribute values are <code>null</code>), else <code>false</code>
+     */
+    private static boolean mergeAttributeSimpleIfPossible(CardDavContact contact, CardDavContact otherContact,
+            CardDavContactAttributes attribute) {
+        if (otherContact.hasAttribute(attribute)) {
+            if (contact.hasAttribute(attribute)) {
+                return false;
+            } else {
+                contact.setAttributeValue(attribute, otherContact.getAttributeValue(attribute));
+                return true;
+            }
+        } else {
+            return true;
         }
-
-        return index;
     }
 }

@@ -15,6 +15,8 @@ public class Normalizer {
     public static void normalize(CardDavContact contact) {
         ensureDefaultsAreLoaded();
 
+        // TODO normalize should normalize additional data, too
+
         EncodingNormalizer.normalize(contact);
         PhoneNumberNormalizer.normalize(contact);
         EmailNormalizer.normalize(contact);

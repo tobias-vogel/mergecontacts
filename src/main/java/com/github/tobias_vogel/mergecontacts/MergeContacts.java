@@ -3,7 +3,7 @@ package com.github.tobias_vogel.mergecontacts;
 import java.util.Set;
 
 import com.github.tobias_vogel.mergecontacts.data.CardDavContact;
-import com.github.tobias_vogel.mergecontacts.merging.Merger;
+import com.github.tobias_vogel.mergecontacts.merging.MergeCoordinator;
 
 class MergeContacts {
 
@@ -102,7 +102,7 @@ class MergeContacts {
 
 
     private static void mergeContacts() {
-        mainContacts = Merger.coordinateMerge(mainContacts, additionalContacts);
+        mainContacts = MergeCoordinator.coordinateMerge(mainContacts, additionalContacts);
     }
 
 

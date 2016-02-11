@@ -1,112 +1,57 @@
 package com.github.tobias_vogel.mergecontacts.data;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import com.github.tobias_vogel.mergecontacts.merging.Merger;
 import com.github.tobias_vogel.mergecontacts.normalizers.Normalizer;
 
 public class CardDavContact implements Cloneable {
 
+    private static final char REPLACEMENT_CHARACTER = '-';
+
     public enum CardDavContactAttributes {
-        GIVEN_NAME, FAMILY_NAME, NICKNAME, MAIL, WORK_PHONE, HOME_PHONE, FAX, PAGER, MOBILE_PHONE, STREET, STATE, ZIP, COUNTRY, TITLE, ORGANIZATIONAL_UNIT, ORGANIZATION, YEAR, MONTH, DAY, NOTES
+        GIVEN_NAME, FAMILY_NAME, NICKNAME, MAIL, WORK_PHONE, HOME_PHONE, FAX, PAGER, MOBILE_PHONE, STREET, STATE, ZIP, COUNTRY, TITLE, ORGANIZATIONAL_UNIT, ORGANIZATION, YEAR, MONTH, DAY, NOTES, SPECIAL_ORG_AND_ORG_UNIT, SPECIAL_POSTAL_ADDRESS
     }
 
     private Map<CardDavContactAttributes, String> attributes;
 
-    private static final char REPLACEMENT_CHARACTER = '-';
+    private List<AdditionalData> additionalData;
 
 
 
 
 
-    public CardDavContact(Map<CardDavContactAttributes, String> contactAttributes) {
-        if (contactAttributes == null) {
+    private CardDavContact(Map<CardDavContactAttributes, String> providedAttributes,
+            List<AdditionalData> providedAdditionalData) {
+        if (providedAttributes == null) {
             throw new RuntimeException("The provided attributes map was null.");
         }
 
-        if (contactAttributes.containsKey(null)) {
+        if (providedAttributes.containsKey(null)) {
             throw new RuntimeException("The provided attributes map contained a null key.");
         }
 
-        attributes = new HashMap<>(contactAttributes);
+        attributes = new HashMap<>(providedAttributes);
+
+        additionalData = new ArrayList<>();
+        String pureNotes = AdditionalData.parseNotesAndMergeWithAdditionalData(
+                attributes.get(CardDavContactAttributes.NOTES), providedAdditionalData);
+
+        attributes.put(CardDavContactAttributes.NOTES, pureNotes);
 
         normalize();
     }
-
-    // def clone()
-    // clonedAttributes = {}
-    // @@attributes.each do |attribute|
-    // clonedAttributes[attribute] = instance_variable_get("@#{attribute}")
-    // end
-    //
-    // return CardDavContact.new(clonedAttributes)
-    // end
-
-    // private boolean allAttributesAreSet() {
-    // return attributes.size() == ATTRIBUTES.size();
-    // }
-
-    // def eql?(other)@
-    //
-    //
-    //
-    //
-    //
-    // @attributes.each() do |attribute|
-    // thisValue = instance_variable_get("@#{attribute}")
-    // otherValue = other.instance_variable_get("@#{attribute}")
-    // return false unless thisValue.eql?(otherValue)
-    // end
-    // return true
-    // end
 
 
 
 
 
     public void mergeInOtherContact(CardDavContact otherContact) {
-        // mergeNames(other);
-        // mergeEMails(other);
-        // #todo implement for other attributes
-        // # go over all attributes, but respect that phone numbers can be mixed
-        // around several fields
-        // # @@attributes.each() do |attribute| ...
-
-        // TODO do this in another class
-
-        // private
-        // def mergeNamesSmart(main, other)
-        // # tokenize both names by blanks
-        // # do a nested loop and delete all names that have longer counterparts
-        // in the other contact
-        // # join both lists back to a string
-        //
-        // # tokenize both names
-        // mainNames = other.to_s().split(" ")
-        // otherNames = other.to_s().split(" ")
-        //
-        // # merge all names
-        // names = mainNames + otherNames
-        //
-        // # remove exact duplicates
-        // names.uniq!()
-        //
-        // # remove all short names that exist in a
-        //
-        //
-        //
-        //
-        //
-        // longer form (that is, are part of another name)
-        // names = removeSubstringNames(names)
-        //
-        // # append all remaining parts
-        // main = names.join(" ")
-        //
-        // return main
-        // end
-        //
-
+        Merger.enrichContactWithOtherContact(this, otherContact);
+        normalize();
     }
 
 
@@ -122,6 +67,9 @@ public class CardDavContact implements Cloneable {
 
 
     public String getAttributeValue(CardDavContactAttributes attributeKey) {
+        if (attributeKey == CardDavContactAttributes.NOTES) {
+            AdditionalData.generateNotesFieldContent(additionalData, attributes.get(CardDavContactAttributes.NOTES));
+        }
         return attributes.get(attributeKey);
     }
 
@@ -137,45 +85,15 @@ public class CardDavContact implements Cloneable {
 
 
 
-    public boolean hasAttribute(CardDavContactAttributes numberAttribute) {
-        return attributes.containsKey(numberAttribute);
+    public boolean hasAttribute(CardDavContactAttributes attribute) {
+        return attributes.containsKey(attribute);
     }
 
-    // def mergeNames(other)
-    // puts @givenName
-    // puts other.givenName
-    // if @givenName.nil?()
-    // @givenName = other.givenName
-    // elsif @givenName[other.givenName].nil?()
-    // @givenName << " " + other.givenName
-    // end
-    //
-    // @givenName = mergeNamesSmart(@givenName, other.givenName)
-    // # das soll er machen:
-    // # die namen des zweiten
-    // tokenisieren (an leerzeichen) und die neuen teile an den hauptnamen
-    // anhängen
-    //
-    // # if @familyName.nil?()
-    // # @familyName = other.familyName
-    // # elsif @familyName[other.familyName].nil?()
-    // # @givenName << " " + other.givenName
-    // # end
-    //
-    //
-    // end
-    //
 
 
 
 
-
-    //
-    //
-    // def mergeEMails(other)
-    // # todo
-    // end
-
+    @Deprecated
     public CardDavContact clone() {
         // TODO remove this method? (and the clone interface implementation?)
         return null;
@@ -230,19 +148,16 @@ public class CardDavContact implements Cloneable {
         return key;
     }
 
-    static class Builder {
+    public static class Builder {
         private Map<CardDavContactAttributes, String> params = new HashMap<>(CardDavContactAttributes.values().length);
-
-        //
-        // public Builder() {
-        // }
+        private List<AdditionalData> additionalData = new ArrayList<>();
 
 
 
 
 
         public CardDavContact build() {
-            return new CardDavContact(params);
+            return new CardDavContact(params, additionalData);
         }
 
 
@@ -424,5 +339,41 @@ public class CardDavContact implements Cloneable {
             params.put(CardDavContactAttributes.NOTES, newNotes);
             return this;
         }
+
+
+
+
+
+        public Builder addAlternativeData(CardDavContactAttributes attribute, String value) {
+            additionalData.add(new AlternativeData(attribute, value));
+            return this;
+        }
+
+
+
+
+
+        public Builder addOldData(CardDavContactAttributes attribute, String value) {
+            additionalData.add(new OldData(attribute, value));
+            return this;
+        }
+    }
+
+
+
+
+
+    public Object getAlternativeData(CardDavContactAttributes mail) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+
+
+
+
+    public Object getOldData(CardDavContactAttributes day) {
+        // TODO Auto-generated method stub
+        return null;
     }
 }
