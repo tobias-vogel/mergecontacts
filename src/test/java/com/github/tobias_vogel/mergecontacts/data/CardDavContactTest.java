@@ -198,9 +198,11 @@ public class CardDavContactTest {
     @Test
     public void testBuilderCompleteness() {
         try {
+            CardDavContactAttributes attributeForAdditionalData = CardDavContactAttributes.PAGER;
             Builder builder = new CardDavContact.Builder();
             Class<? extends Builder> builderClass = builder.getClass();
             Set<Method> methods = new HashSet<>(Arrays.asList(builder.getClass().getMethods()));
+            // todo use java8 magic?
             // methods = methods.stream().filter(m ->
             // m.getReturnType().equals(builderClass)).collect(Collectors.toSet());
 
@@ -208,12 +210,24 @@ public class CardDavContactTest {
 
             for (Method method : methods) {
                 if (method.getReturnType().equals(builderClass)) {
-                    // use something that is not changed during any
+                    // use something individual that is not changed during any
                     // normalization
                     String randomValue = method.getName();
                     someValues.add(randomValue);
-                    Object result = method.invoke(builder, randomValue);
-                    Assert.assertEquals(builder, result);
+
+                    Object invocationResult;
+                    switch (method.getParameterCount()) {
+                    case 1:
+                        invocationResult = method.invoke(builder, randomValue);
+                        break;
+                    case 2:
+                        invocationResult = method.invoke(builder, attributeForAdditionalData, randomValue);
+                        break;
+
+                    default:
+                        continue;
+                    }
+                    Assert.assertEquals(builder, invocationResult);
                 }
             }
             CardDavContact contact = builder.build();
@@ -221,6 +235,15 @@ public class CardDavContactTest {
                 Assert.assertTrue("The attribute \"" + attribute.toString() + "\" seems to have not been set.",
                         someValues.remove(contact.getAttributeValue(attribute)));
             }
+
+            Assert.assertTrue(
+                    "The alternative attribute \"" + attributeForAdditionalData.toString()
+                            + "\" seems to have not been set.",
+                    someValues.remove(contact.getAlternativeData(attributeForAdditionalData)));
+            Assert.assertTrue(
+                    "The old attribute \"" + attributeForAdditionalData.toString() + "\" seems to have not been set.",
+                    someValues.remove(contact.getOldData(attributeForAdditionalData)));
+
             Assert.assertTrue(someValues.isEmpty());
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             Assert.fail();

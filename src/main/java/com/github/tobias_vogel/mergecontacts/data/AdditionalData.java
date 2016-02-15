@@ -39,6 +39,10 @@ public abstract class AdditionalData {
      * @return the notes field value without additional data
      */
     public static String parseNotesAndMergeWithAdditionalData(String notesValue, List<AdditionalData> additionalData) {
+        if (notesValue == null) {
+            return null;
+        }
+
         List<String> noteFragments = new ArrayList<>();
 
         if (additionalData == null) {
@@ -109,5 +113,24 @@ public abstract class AdditionalData {
     public static void generateNotesFieldContent(List<AdditionalData> additionalDataItems, String string) {
         // TODO Auto-generated method stub
 
+    }
+
+
+
+
+
+    public static List<String> getFilteredCopyOfAdditionalData(CardDavContactAttributes filterAttribute,
+            Class<? extends AdditionalData> filterTypeOfAdditionalData, List<AdditionalData> additionalData) {
+        // TODO use java8 magic
+        List<String> result = new ArrayList<>();
+        for (AdditionalData additionalDataItem : additionalData) {
+            if (additionalDataItem.getClass() == filterTypeOfAdditionalData) {
+                if (additionalDataItem.attribute == filterAttribute) {
+                    result.add(additionalDataItem.value);
+                }
+            }
+        }
+
+        return result;
     }
 }

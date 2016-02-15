@@ -148,6 +148,40 @@ public class CardDavContact implements Cloneable {
         return key;
     }
 
+
+
+
+
+    /**
+     * returns a copy of all alternative data items for the specified attribute
+     * 
+     * @param attribute
+     *            the {@link CardDavContactAttributes} to return
+     * @return a copy of the values of alternative data for the specified
+     *         attribute
+     */
+    public List<String> getAlternativeData(CardDavContactAttributes attribute) {
+        List<String> result = AdditionalData.getFilteredCopyOfAdditionalData(attribute, AlternativeData.class,
+                additionalData);
+        return result;
+    }
+
+
+
+
+
+    /**
+     * returns a copy of all old data items for the specified attribute
+     * 
+     * @param attribute
+     *            the {@link CardDavContactAttributes} to return
+     * @return a copy of the values of old data for the specified attribute
+     */
+    public List<String> getOldData(CardDavContactAttributes attribute) {
+        List<String> result = AdditionalData.getFilteredCopyOfAdditionalData(attribute, OldData.class, additionalData);
+        return result;
+    }
+
     public static class Builder {
         private Map<CardDavContactAttributes, String> params = new HashMap<>(CardDavContactAttributes.values().length);
         private List<AdditionalData> additionalData = new ArrayList<>();
@@ -359,21 +393,4 @@ public class CardDavContact implements Cloneable {
         }
     }
 
-
-
-
-
-    public Object getAlternativeData(CardDavContactAttributes mail) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-
-
-
-
-    public Object getOldData(CardDavContactAttributes day) {
-        // TODO Auto-generated method stub
-        return null;
-    }
 }
