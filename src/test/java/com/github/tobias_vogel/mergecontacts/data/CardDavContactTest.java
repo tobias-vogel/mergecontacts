@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.Assert;
@@ -11,6 +12,7 @@ import org.junit.Test;
 
 import com.github.tobias_vogel.mergecontacts.data.CardDavContact.Builder;
 import com.github.tobias_vogel.mergecontacts.data.CardDavContact.CardDavContactAttributes;
+import com.github.tobias_vogel.mergecontacts.exceptions.IllegalAttributeException;
 
 public class CardDavContactTest {
 
@@ -104,6 +106,27 @@ public class CardDavContactTest {
         Assert.assertEquals("4 Privet Drive", contact.getAttributeValue(CardDavContactAttributes.STREET));
         Assert.assertEquals("His Wizardryness", contact.getAttributeValue(CardDavContactAttributes.TITLE));
         Assert.assertEquals("666", contact.getAttributeValue(CardDavContactAttributes.ZIP));
+    }
+
+
+
+
+
+    @Test
+    public void testSettingSpecialAttributesDirectlyIsForbidden() {
+        CardDavContact contact = new CardDavContact.Builder().build();
+
+        try {
+            contact.setAttributeValue(CardDavContactAttributes.SPECIAL_ORG_AND_ORG_UNIT, "something");
+        } catch (IllegalAttributeException e) {
+            // expected
+        }
+
+        try {
+            contact.setAttributeValue(CardDavContactAttributes.SPECIAL_POSTAL_ADDRESS, "something");
+        } catch (IllegalAttributeException e) {
+            // expected
+        }
     }
 
 
@@ -232,17 +255,24 @@ public class CardDavContactTest {
             }
             CardDavContact contact = builder.build();
             for (CardDavContactAttributes attribute : CardDavContactAttributes.values()) {
-                Assert.assertTrue("The attribute \"" + attribute.toString() + "\" seems to have not been set.",
-                        someValues.remove(contact.getAttributeValue(attribute)));
+                try {
+                    Assert.assertTrue("The attribute \"" + attribute.toString() + "\" seems to have not been set.",
+                            someValues.remove(contact.getAttributeValue(attribute)));
+                } catch (IllegalAttributeException e) {
+                    // expected for SPECIAL attributes (tested below)
+                }
             }
 
-            Assert.assertTrue(
-                    "The alternative attribute \"" + attributeForAdditionalData.toString()
-                            + "\" seems to have not been set.",
-                    someValues.remove(contact.getAlternativeData(attributeForAdditionalData)));
+            List<String> alternativeData = contact.getAlternativeData(attributeForAdditionalData);
+            Assert.assertEquals(1, alternativeData.size());
+            Assert.assertTrue("The alternative attribute \"" + attributeForAdditionalData.toString()
+                    + "\" seems to have not been set.", someValues.remove(alternativeData.iterator().next()));
+
+            List<String> oldData = contact.getOldData(attributeForAdditionalData);
+            Assert.assertEquals(1, oldData.size());
             Assert.assertTrue(
                     "The old attribute \"" + attributeForAdditionalData.toString() + "\" seems to have not been set.",
-                    someValues.remove(contact.getOldData(attributeForAdditionalData)));
+                    someValues.remove(oldData.iterator().next()));
 
             Assert.assertTrue(someValues.isEmpty());
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {

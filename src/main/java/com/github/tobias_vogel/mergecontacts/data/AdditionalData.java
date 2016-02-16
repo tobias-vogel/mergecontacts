@@ -35,10 +35,11 @@ public abstract class AdditionalData {
      *            the value from the notes field
      * @param additionalData
      *            a (possibly <code>null</code>) list of already known
-     *            additional data
+     *            additional data items
      * @return the notes field value without additional data
      */
-    public static String parseNotesAndMergeWithAdditionalData(String notesValue, List<AdditionalData> additionalData) {
+    public static String parseNotesAndMergeWithAdditionalDataAndEnrichAdditionalData(String notesValue,
+            List<AdditionalData> additionalData) {
         if (notesValue == null) {
             return null;
         }

@@ -1,10 +1,14 @@
 package com.github.tobias_vogel.mergecontacts.data;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import com.github.tobias_vogel.mergecontacts.exceptions.IllegalAttributeException;
 import com.github.tobias_vogel.mergecontacts.merging.Merger;
 import com.github.tobias_vogel.mergecontacts.normalizers.Normalizer;
 
@@ -15,6 +19,9 @@ public class CardDavContact implements Cloneable {
     public enum CardDavContactAttributes {
         GIVEN_NAME, FAMILY_NAME, NICKNAME, MAIL, WORK_PHONE, HOME_PHONE, FAX, PAGER, MOBILE_PHONE, STREET, STATE, ZIP, COUNTRY, TITLE, ORGANIZATIONAL_UNIT, ORGANIZATION, YEAR, MONTH, DAY, NOTES, SPECIAL_ORG_AND_ORG_UNIT, SPECIAL_POSTAL_ADDRESS
     }
+
+    protected Set<CardDavContactAttributes> attributesNotToSetDirectly = new HashSet<>(Arrays.asList(
+            CardDavContactAttributes.SPECIAL_ORG_AND_ORG_UNIT, CardDavContactAttributes.SPECIAL_POSTAL_ADDRESS));
 
     private Map<CardDavContactAttributes, String> attributes;
 
@@ -36,9 +43,10 @@ public class CardDavContact implements Cloneable {
 
         attributes = new HashMap<>(providedAttributes);
 
-        additionalData = new ArrayList<>();
-        String pureNotes = AdditionalData.parseNotesAndMergeWithAdditionalData(
+        String pureNotes = AdditionalData.parseNotesAndMergeWithAdditionalDataAndEnrichAdditionalData(
                 attributes.get(CardDavContactAttributes.NOTES), providedAdditionalData);
+
+        additionalData = providedAdditionalData;
 
         attributes.put(CardDavContactAttributes.NOTES, pureNotes);
 
@@ -67,9 +75,14 @@ public class CardDavContact implements Cloneable {
 
 
     public String getAttributeValue(CardDavContactAttributes attributeKey) {
+        if (attributesNotToSetDirectly.contains(attributeKey)) {
+            throw new IllegalAttributeException(attributeKey + " must not be requested directly.");
+        }
+
         if (attributeKey == CardDavContactAttributes.NOTES) {
             AdditionalData.generateNotesFieldContent(additionalData, attributes.get(CardDavContactAttributes.NOTES));
         }
+
         return attributes.get(attributeKey);
     }
 
@@ -78,6 +91,9 @@ public class CardDavContact implements Cloneable {
 
 
     public void setAttributeValue(CardDavContactAttributes attributeName, String attributeValue) {
+        if (attributesNotToSetDirectly.contains(attributeName)) {
+            throw new IllegalAttributeException(attributeName + " must not be set directly.");
+        }
         attributes.put(attributeName, attributeValue);
     }
 
@@ -86,6 +102,9 @@ public class CardDavContact implements Cloneable {
 
 
     public boolean hasAttribute(CardDavContactAttributes attribute) {
+        if (attributesNotToSetDirectly.contains(attribute)) {
+            throw new IllegalAttributeException(attribute + " must not be queried directly.");
+        }
         return attributes.containsKey(attribute);
     }
 
