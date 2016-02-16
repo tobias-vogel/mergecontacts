@@ -111,9 +111,24 @@ public abstract class AdditionalData {
 
 
 
-    public static void generateNotesFieldContent(List<AdditionalData> additionalDataItems, String string) {
-        // TODO Auto-generated method stub
+    public static String generateNotesFieldContent(List<AdditionalData> additionalDataItems,
+            String currentNotesFieldContent) {
+        List<String> resultTokens = new ArrayList<>(1 + additionalDataItems.size());
+        resultTokens.add(currentNotesFieldContent);
+        // TODO use java8 magic
+        for (AdditionalData additionalDataItem : additionalDataItems) {
+            resultTokens.add(additionalDataItem.createKeyValuePair());
+        }
 
+        return Joiner.on(NOTES_SPLIT_TOKEN).join(resultTokens);
+    }
+
+
+
+
+
+    private String createKeyValuePair() {
+        return getIdentifier() + "-" + attribute + "=" + value;
     }
 
 
@@ -134,4 +149,12 @@ public abstract class AdditionalData {
 
         return result;
     }
+
+
+
+
+
+    public abstract String getIdentifier(); // TODO java8: use default
+                                            // implementation
+    // that exactly returns IDENTIFIER?
 }

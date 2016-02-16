@@ -141,7 +141,7 @@ public class CardDavContactTest {
                 .notes("Something completely different").build();
 
         Assert.assertEquals("Smith", contact.getAttributeValue(CardDavContactAttributes.FAMILY_NAME));
-        Assert.assertEquals("old-familyname=Lennon<|>Something completely different<|>alternative-mail=abc@def.com",
+        Assert.assertEquals("Something completely different<|>old-FAMILY_NAME=Lennon<|>alternative-MAIL=abc@def.com",
                 contact.getAttributeValue(CardDavContactAttributes.NOTES));
     }
 
@@ -256,8 +256,14 @@ public class CardDavContactTest {
             CardDavContact contact = builder.build();
             for (CardDavContactAttributes attribute : CardDavContactAttributes.values()) {
                 try {
-                    Assert.assertTrue("The attribute \"" + attribute.toString() + "\" seems to have not been set.",
-                            someValues.remove(contact.getAttributeValue(attribute)));
+                    if (attribute == CardDavContactAttributes.NOTES) {
+                        Assert.assertEquals("notes<|>alternative-PAGER=addAlternativeData<|>old-PAGER=addOldData",
+                                contact.getAttributeValue(attribute));
+                        someValues.remove("notes");
+                    } else {
+                        Assert.assertTrue("The attribute \"" + attribute.toString() + "\" seems to have not been set.",
+                                someValues.remove(contact.getAttributeValue(attribute)));
+                    }
                 } catch (IllegalAttributeException e) {
                     // expected for SPECIAL attributes (tested below)
                 }

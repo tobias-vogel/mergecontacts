@@ -14,4 +14,13 @@ public class AlternativeData extends AdditionalData {
         this.attribute = attribute;
         this.value = value;
     }
+
+
+
+
+
+    @Override
+    public String getIdentifier() {
+        return IDENTIFIER;
+    }
 }

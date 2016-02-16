@@ -20,7 +20,7 @@ public class CardDavContact implements Cloneable {
         GIVEN_NAME, FAMILY_NAME, NICKNAME, MAIL, WORK_PHONE, HOME_PHONE, FAX, PAGER, MOBILE_PHONE, STREET, STATE, ZIP, COUNTRY, TITLE, ORGANIZATIONAL_UNIT, ORGANIZATION, YEAR, MONTH, DAY, NOTES, SPECIAL_ORG_AND_ORG_UNIT, SPECIAL_POSTAL_ADDRESS
     }
 
-    protected Set<CardDavContactAttributes> attributesNotToSetDirectly = new HashSet<>(Arrays.asList(
+    protected static Set<CardDavContactAttributes> ATTRIBUTES_NOT_TO_SET_DIRECTLY = new HashSet<>(Arrays.asList(
             CardDavContactAttributes.SPECIAL_ORG_AND_ORG_UNIT, CardDavContactAttributes.SPECIAL_POSTAL_ADDRESS));
 
     private Map<CardDavContactAttributes, String> attributes;
@@ -75,12 +75,13 @@ public class CardDavContact implements Cloneable {
 
 
     public String getAttributeValue(CardDavContactAttributes attributeKey) {
-        if (attributesNotToSetDirectly.contains(attributeKey)) {
+        if (ATTRIBUTES_NOT_TO_SET_DIRECTLY.contains(attributeKey)) {
             throw new IllegalAttributeException(attributeKey + " must not be requested directly.");
         }
 
         if (attributeKey == CardDavContactAttributes.NOTES) {
-            AdditionalData.generateNotesFieldContent(additionalData, attributes.get(CardDavContactAttributes.NOTES));
+            return AdditionalData.generateNotesFieldContent(additionalData,
+                    attributes.get(CardDavContactAttributes.NOTES));
         }
 
         return attributes.get(attributeKey);
@@ -91,7 +92,7 @@ public class CardDavContact implements Cloneable {
 
 
     public void setAttributeValue(CardDavContactAttributes attributeName, String attributeValue) {
-        if (attributesNotToSetDirectly.contains(attributeName)) {
+        if (ATTRIBUTES_NOT_TO_SET_DIRECTLY.contains(attributeName)) {
             throw new IllegalAttributeException(attributeName + " must not be set directly.");
         }
         attributes.put(attributeName, attributeValue);
@@ -102,7 +103,7 @@ public class CardDavContact implements Cloneable {
 
 
     public boolean hasAttribute(CardDavContactAttributes attribute) {
-        if (attributesNotToSetDirectly.contains(attribute)) {
+        if (ATTRIBUTES_NOT_TO_SET_DIRECTLY.contains(attribute)) {
             throw new IllegalAttributeException(attribute + " must not be queried directly.");
         }
         return attributes.containsKey(attribute);
