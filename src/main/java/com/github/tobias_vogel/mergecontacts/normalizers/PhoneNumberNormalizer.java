@@ -11,10 +11,29 @@ public class PhoneNumberNormalizer {
             return;
         }
 
+        // TODO use the java 8 magic in
+        // carddavcontact#updateAdditionalAttributes to do it in-place
+        normalizeRegularFields(contact);
+        normalizeAdditionalDataFields(contact);
+    }
+
+
+
+
+
+    private static void normalizeAdditionalDataFields(CardDavContact contact) {
+        // TODO implement something (maybe with java8)
+    }
+
+
+
+
+
+    private static void normalizeRegularFields(CardDavContact contact) {
         CardDavContactAttributes[] numberAttributes = { CardDavContactAttributes.WORK_PHONE,
                 CardDavContactAttributes.HOME_PHONE, CardDavContactAttributes.FAX, CardDavContactAttributes.PAGER,
                 CardDavContactAttributes.MOBILE_PHONE };
-        // TODO use java8 lamda magic here (?)
+        // TODO use java8 lambda magic here (?)
         for (CardDavContactAttributes numberAttribute : numberAttributes) {
             if (contact.hasAttribute(numberAttribute)) {
                 String number = contact.getAttributeValue(numberAttribute);
@@ -22,7 +41,6 @@ public class PhoneNumberNormalizer {
                 contact.setAttributeValue(numberAttribute, normalizedNumber);
             }
         }
-
     }
 
 

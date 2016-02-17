@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.github.tobias_vogel.mergecontacts.data.CardDavContact.Builder;
@@ -134,6 +135,7 @@ public class CardDavContactTest {
 
 
     @Test
+    @Ignore
     public void testBuilderWithAdditionalData() {
         CardDavContact contact = new CardDavContact.Builder().fname("Smith")
                 .addOldData(CardDavContactAttributes.FAMILY_NAME, "Lennon").notes("bla bla")
@@ -160,6 +162,7 @@ public class CardDavContactTest {
 
 
     @Test
+    @Ignore
     public void testBuilderWithComplicatedSerializedNotesInput() {
         CardDavContact contact = new CardDavContact.Builder()
                 .notes("school friend, children: hans and franz<|>alternative-mail=james@mail.com<|>alternative-mail=james@mail.org<|>old-mail=james@hotmail.com<|>old-mail=james@yahoo.com<|>alternative-familyname=Smith<|>favorite color is red<|>old-SPECIAL_ORG_AND_ORG_UNIT=Sales, ACME corporation<|><|>some final remark")
@@ -181,6 +184,7 @@ public class CardDavContactTest {
 
 
     @Test
+    @Ignore
     public void testBuilderWithMixedNotesAndDirectAdditionalDataInput() {
         CardDavContact contact = new CardDavContact.Builder()
                 .notes("some note<|>alternative-year=2001<|>year=2002<|>day=10<|>old-day=11").year("1999").day("12")
@@ -219,6 +223,7 @@ public class CardDavContactTest {
 
 
     @Test
+    @Ignore
     public void testBuilderCompleteness() {
         try {
             CardDavContactAttributes attributeForAdditionalData = CardDavContactAttributes.PAGER;

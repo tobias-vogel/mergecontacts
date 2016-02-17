@@ -202,6 +202,34 @@ public class CardDavContact implements Cloneable {
         return result;
     }
 
+
+
+
+
+    public void updateAdditionalData(/*
+                                      * Function filter, Function updateFunction
+                                      */) {
+        // TODO use java 8 magic to implement this
+        // this updates the attributes in place, no need to entirely remove and
+        // replace them
+        // and this keeps the attributes in order
+    }
+
+    // /**
+    // * Deletes the existing old data values for the specified attribute and
+    // * replaces them with the new values.
+    // *
+    // * @param attribute
+    // * the attribute to replace all values for
+    // * @param replacementValues
+    // * the list of values to use instead of the old values
+    // */
+    // public void replaceOldData(CardDavContactAttributes attribute,
+    // List<String> replacementValues) {
+    // // use java 8 magic here (filter and then replace)
+    // additionalData
+    // }
+
     public static class Builder {
         private Map<CardDavContactAttributes, String> params = new HashMap<>(CardDavContactAttributes.values().length);
         private List<AdditionalData> additionalData = new ArrayList<>();
