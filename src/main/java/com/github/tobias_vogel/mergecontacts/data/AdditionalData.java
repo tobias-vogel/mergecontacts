@@ -154,7 +154,5 @@ public abstract class AdditionalData {
 
 
 
-    public abstract String getIdentifier(); // TODO java8: use default
-                                            // implementation
-    // that exactly returns IDENTIFIER?
+    public abstract String getIdentifier();
 }
