@@ -8,7 +8,7 @@ import com.github.tobias_vogel.mergecontacts.merging.MergeCoordinator;
 
 class MergeContacts {
 
-    private static String mainContactFilenSpecifier;
+    private static String mainContactFileSpecifier;
 
     private static Set<CardDavContact> mainContacts;
 
@@ -49,7 +49,7 @@ class MergeContacts {
          */
 
         // fake result
-        mainContactFilenSpecifier = "CSV:data/blabla.csv";
+        mainContactFileSpecifier = "CSV:data/blabla.csv";
         additionalContactsFileSpecifiers = new String[] { "TSV:data/huhu.tsv", "VCARD:data/haha.vcard" };
     }
 
@@ -58,7 +58,7 @@ class MergeContacts {
 
 
     private static void loadAndClenseContactsFromFiles() {
-        mainContacts = FileLoaderAndClenser.loadFileAndClenseContacts(mainContactFilenSpecifier);
+        mainContacts = FileLoaderAndClenser.loadFileAndClenseContacts(mainContactFileSpecifier);
 
         for (String additionalFileSpecifier : additionalContactsFileSpecifiers) {
             additionalContacts.addAll(FileLoaderAndClenser.loadFileAndClenseContacts(additionalFileSpecifier));
