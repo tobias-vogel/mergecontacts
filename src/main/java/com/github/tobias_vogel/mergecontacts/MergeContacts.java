@@ -16,6 +16,8 @@ class MergeContacts {
 
     private static Set<CardDavContact> additionalContacts;
 
+    private static String targetFilename;
+
 
 
 
@@ -39,14 +41,8 @@ class MergeContacts {
     private static void parseFileSpecifiersFromCommandLineArguments(String[] filenames) {
         // TODO use jcommander to parse command line arguments
 
-        /*
-         * @targetFilename = filenames.shift() if @targetFilename.nil? raise
-         * "No target file was provided. Exiting" elsif
-         * File.exists?(@targetFilename) raise
-         * "Target file #{@targetFilename} exists already. Exiting." end XXX
-         * 
-         * @filenames = filenames
-         */
+        // TODO respect an overwrite flag that allows to overwrite the possibly
+        // existing target file
 
         // fake result
         mainContactFileSpecifier = "CSV:data/blabla.csv";
@@ -78,6 +74,7 @@ class MergeContacts {
 
 
     private static void exportContactsToTsv() {
-        // todo
+        // TODO implement
+        System.out.println("would (perhaps) write to " + targetFilename);
     }
 }
