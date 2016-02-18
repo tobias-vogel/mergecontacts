@@ -1,6 +1,18 @@
 package com.github.tobias_vogel.mergecontacts.datasources;
+
+import java.util.Set;
+
+import com.github.tobias_vogel.mergecontacts.data.CardDavContact;
+
 public abstract class TabularDataSource extends DataSource {
+
+    @Override
+    public Set<CardDavContact> readContacts() {
+        // TODO Auto-generated method stub
+        return null;
+    }
     //
+
     // def loadAndClenseContacts()
     // content = loadFile(@filename)
     // headerLine, content = splitHeaderLineFromContent(content)

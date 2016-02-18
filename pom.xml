@@ -22,9 +22,14 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-    	<groupId>com.beust</groupId>
-    	<artifactId>jcommander</artifactId>
-    	<version>1.48</version>
+        <groupId>com.beust</groupId>
+        <artifactId>jcommander</artifactId>
+        <version>1.48</version>
+    </dependency>
+    <dependency>
+        <groupId>org.reflections</groupId>
+        <artifactId>reflections-maven</artifactId>
+        <version>0.9.9-RC2</version>
     </dependency>
     <dependency>
     	<groupId>com.google.guava</groupId>
