@@ -29,7 +29,7 @@ public class FileLoaderAndClenser {
             for (Class<? extends DataSource> dataSourceClass : dataSourceClasses) {
                 if (!Modifier.isAbstract(dataSourceClass.getModifiers())) {
                     String prefix = dataSourceClass.newInstance().getPrefix();
-                    Utils.appendMapOrDie(PREFIX_2_DATA_SOURCE_LOOKUP, prefix, dataSourceClass);
+                    Utils.appendMapOrDieIfKeyExists(PREFIX_2_DATA_SOURCE_LOOKUP, prefix, dataSourceClass);
                 }
             }
         } catch (InstantiationException | IllegalAccessException e) {
@@ -59,7 +59,7 @@ public class FileLoaderAndClenser {
 
         DataSource dataSource = instantiateDatasource(dataSourceType, filename.toString());
 
-        Set<CardDavContact> contacts = dataSource.readContacts();
+        Set<CardDavContact> contacts = dataSource.readContacts(filename.toString());
 
         return contacts;
     }

@@ -18,7 +18,7 @@ public abstract class DataSource {
 
 
 
-    public abstract Set<CardDavContact> readContacts();
+    public abstract Set<CardDavContact> readContacts(String filename);
 
     // def normalizeContacts()
     // #TODO invoke a chain of normalizers (always on the whole contact)

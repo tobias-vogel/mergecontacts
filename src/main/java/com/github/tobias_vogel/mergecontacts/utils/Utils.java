@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.Set;
 
 import com.github.tobias_vogel.mergecontacts.data.CardDavContact;
-import com.github.tobias_vogel.mergecontacts.datasources.DataSource;
 
 public class Utils {
 
@@ -28,8 +27,7 @@ public class Utils {
 
 
 
-    public static void appendMapOrDie(Map<String, Class<? extends DataSource>> map, String key,
-            Class<? extends DataSource> value) {
+    public static <K, V> void appendMapOrDieIfKeyExists(Map<K, V> map, K key, V value) {
         // TODO research, whether there is a known mechanism for this
 
         if (map.containsKey(key)) {
@@ -38,4 +36,18 @@ public class Utils {
             map.put(key, value);
         }
     }
+
+    // @Deprecated
+    // public static void appendMapOrDieIfKeyExists(Map<String, Class<? extends
+    // DataSource>> map, String key,
+    // Class<? extends DataSource> value) {
+    // // TODO research, whether there is a known mechanism for this
+    //
+    // if (map.containsKey(key)) {
+    // throw new RuntimeException("The key \"" + key + "\" already existed in
+    // the map.");
+    // } else {
+    // map.put(key, value);
+    // }
+    // }
 }

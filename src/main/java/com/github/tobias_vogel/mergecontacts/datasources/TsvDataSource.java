@@ -11,11 +11,16 @@ public class TsvDataSource extends TabularDataSource {
 
 
 
+    @Override
+    public char getDivider() {
+        return '\t';
+    }
+
+
+
+
+
     public TsvDataSource() {
         // required default constructor for getPrefix() method
     }
-
-    // def initialize(filename)
-    // super("\t", filename)
-    // end
 }

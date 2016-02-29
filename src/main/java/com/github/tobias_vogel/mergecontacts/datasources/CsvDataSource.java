@@ -15,6 +15,15 @@ public class CsvDataSource extends TabularDataSource {
         // required default constructor for getPrefix() method
     }
 
+
+
+
+
+    @Override
+    public char getDivider() {
+        return ',';
+    }
+
     // def initialize filename
     // super ",", filename
     // end

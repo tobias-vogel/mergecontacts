@@ -24,7 +24,7 @@ public class VcardDataSource extends DataSource {
 
 
     @Override
-    public Set<CardDavContact> readContacts() {
+    public Set<CardDavContact> readContacts(String filename) {
         // TODO Auto-generated method stub
         return null;
     }
