@@ -20,7 +20,7 @@ public class CsvDataSource extends TabularDataSource {
 
 
     @Override
-    public char getDivider() {
+    public char getFieldSeparator() {
         return ',';
     }
 

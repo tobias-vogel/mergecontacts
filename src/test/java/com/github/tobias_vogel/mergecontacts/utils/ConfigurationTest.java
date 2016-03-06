@@ -98,6 +98,21 @@ public class ConfigurationTest {
 
 
 
+    @Test
+    public void testSettingsWithNonAllowedSpecialCardDavContactAttributes() {
+        try {
+            Configuration.loadProperties(Resources
+                    .getResource("settings-with-non-allowed-special-carddavcontactattributes.properties").getPath());
+            Assert.fail();
+        } catch (Exception e) {
+            // expected
+        }
+    }
+
+
+
+
+
     @Before
     public void setUp() throws Exception {
         Configuration.initializeMaps();

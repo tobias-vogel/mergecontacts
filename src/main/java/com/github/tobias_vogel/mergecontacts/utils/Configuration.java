@@ -14,6 +14,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import com.github.tobias_vogel.mergecontacts.data.CardDavContact;
 import com.github.tobias_vogel.mergecontacts.data.CardDavContact.CardDavContactAttributes;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
@@ -122,6 +123,9 @@ public class Configuration {
     private static CardDavContactAttributes getCardDavContactAttributeFromKey(String key) {
         key = CARDDAVCONTACTATTRIBUTE_EXTRACTION_PATTERN.matcher(key.toLowerCase()).replaceFirst("");
         CardDavContactAttributes attribute = CardDavContactAttributes.valueOf(key.toUpperCase());
+        if (CardDavContact.getAttributesNotToSetDirectly().contains(attribute)) {
+            throw new RuntimeException("The configuration file uses attributes that are not to be set directly.");
+        }
         return attribute;
     }
 

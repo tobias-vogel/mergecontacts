@@ -1,5 +1,5 @@
 # mergecontacts
-A ruby tool to merge different datasources with contacts.
+A java tool to merge different datasources with contacts.
 
 ## Goal
 The goal is to integrate different address book data sources from (partly out-dated) address book exports.
@@ -27,6 +27,19 @@ Put all the data files under …/data/. Invoke main.rb with the files to merge. 
 For example:
 
     main.rb data/result.txt csv:data/flatfile1.csv tsv:data/othercontact-export.tsv vcard:data/outlook.export
+
+
+## A note on notes
+The notes section is just a string. It should not contain newlines, because when exporting these contacts, it would create linebreaks that in turn render the csv files invalid and parsing them is ambigious. Therefore, we don't allow newlines in the notes section.
+
+We further store additional data in the notes section: alternative or old values for other fields. For example, if somebody has two e-mail addresses, one goes into the mail field, the other ends up in the notes field. Another case are out-dated values. For example, if somebody changes his e-mail address, the old value is stored there. This is necessary for merging. Because values have no timestamp, it cannot be decided which value is more recent. When storing old values, ties can be broken more easily. A downside is that connected fields are broken up. For example, if somebody moves several times, it cannot be decided which street belongs to which city. However, we try to keep the order, so this can be used to infer the history. Further, we munch together postal addresses. It cannot be parsed automatically, afterwards, but the merge lookup works and this way, it is meaningful to humans. We also munch together organization and organizational unit as they belong together, too.
+
+We use two different namespaces. Alternative values (like in the e-mail example above) get the prefix "alternative-" followed by the field name, an equals sign and the value. Old values get the prefix "old-". All other information in the notes section is also accepted and is preserved as-is. The divider for fields is "<|>".
+
+Example value for the notes field:
+  school friend, children: hans and franz<|>alternative-mail=james@mail.com<|>alternative-mail=james@mail.org<|>old-mail=james@hotmail.com<|>old-mail=james@yahoo.com<|>alternative-familyname=Smith<|>favorite color is red<|>old-organization=google<|>OLD-organizational unit=ACME corporation<|>some final remark
+
+
 
 
 ## Why?

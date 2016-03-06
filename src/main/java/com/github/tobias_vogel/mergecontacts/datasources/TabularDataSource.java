@@ -1,6 +1,11 @@
 package com.github.tobias_vogel.mergecontacts.datasources;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -8,12 +13,16 @@ import java.util.Map;
 import java.util.Set;
 
 import com.github.tobias_vogel.mergecontacts.data.CardDavContact;
-import com.github.tobias_vogel.mergecontacts.data.CardDavContact.Builder;
 import com.github.tobias_vogel.mergecontacts.data.CardDavContact.CardDavContactAttributes;
+import com.github.tobias_vogel.mergecontacts.utils.Configuration;
+import com.google.common.base.Splitter;
+import com.opencsv.CSVParser;
+import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
 
 public abstract class TabularDataSource extends DataSource {
 
-    private String[] header;
+    private List<CardDavContactAttributes> header = new ArrayList<>();
 
     // private String[][] content;
 
@@ -24,7 +33,8 @@ public abstract class TabularDataSource extends DataSource {
     @Override
     public Set<CardDavContact> readContacts(String filename) {
         this.filename = filename;
-        header = readHeaderFromFile(filename);
+        Configuration.loadDefaultProperties();
+        readHeaderFromFile(filename);
         int fieldCount = calculateFieldCount();
         List<List<String>> content = readContentFromFile();
         content = removeSuperfluousLineBreaksFromTabularFile(fieldCount, content);
@@ -97,7 +107,7 @@ public abstract class TabularDataSource extends DataSource {
         } while (!content.isEmpty());
 
         // TODO prevent duplicate correct rows to be inserted
-        return null;
+        return correctRows;
     }
 
 
@@ -143,13 +153,21 @@ public abstract class TabularDataSource extends DataSource {
 
 
     private List<List<String>> readContentFromFile() {
-        // TODO Auto-generated method stub
-        // body = CSV.read(filename, {:col_sep => @separator})
-        // # we assume the first line to be the header
-        // header = body.shift()
-        // return header, body
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(filename)));) {
+            CSVReader csvReader = new CSVReaderBuilder(br).withCSVParser(new CSVParser(getFieldSeparator()))
+                    .withSkipLines(1).build();
 
-        return null;
+            List<List<String>> result = new ArrayList<>();
+            // TODO use java8 lambda magic
+            for (String[] row : csvReader.readAll()) {
+                result.add(new ArrayList<>(Arrays.asList(row)));
+            }
+
+            csvReader.close();
+            return result;
+        } catch (Exception e) {
+            throw new RuntimeException("Something went wrong during reading a datasource.", e);
+        }
     }
 
 
@@ -161,15 +179,11 @@ public abstract class TabularDataSource extends DataSource {
 
         for (List<String> row : content) {
             Map<CardDavContactAttributes, String> attributeValueMap = convertRowToAttributeValueMap(row);
-
-            CardDavContact.Builder builder = new CardDavContact.Builder();
-
-            CardDavContact contact = useBuilderToCreateContactFromAttributeValueMap(builder, attributeValueMap);
-
+            CardDavContact contact = new CardDavContact(attributeValueMap);
             result.add(contact);
         }
 
-        // TODO remove unused csv library?
+        // TODO remove unused csv library? --> is not unused anymore
         return result;
     }
 
@@ -177,31 +191,18 @@ public abstract class TabularDataSource extends DataSource {
 
 
 
-    private CardDavContact useBuilderToCreateContactFromAttributeValueMap(Builder builder,
-            Map<CardDavContactAttributes, String> attributeValueMap) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-
-
-
-
     private Map<CardDavContactAttributes, String> convertRowToAttributeValueMap(List<String> row) {
+        // XXX hier wird irgendwie notes auf null gesetzt bzw. gar nicht gesetzt
         Map<CardDavContactAttributes, String> map = new HashMap<>(row.size());
 
         for (int i = 0; i < row.size() - 1; i++) {
-            String key = header[i];
+            CardDavContactAttributes attribute = header.get(i);
             String value = row.get(i);
 
-            CardDavContactAttributes.valueOf(key);
-        }
-        for (String string : row) {
-
+            map.put(attribute, value);
         }
 
-        // TODO Auto-generated method stub
-        return null;
+        return map;
     }
 
 
@@ -209,27 +210,45 @@ public abstract class TabularDataSource extends DataSource {
 
 
     private int calculateFieldCount() {
-        return header.length;
+        return header.size();
     }
 
 
 
 
 
-    private String[] readHeaderFromFile(String filename) {
-        // def loadFileWithHeader(filename)
-        // body = CSV.read(filename, {:col_sep => @separator})
-        // # we assume the first line to be the header
-        // header = body.shift()
-        // return header, body
-        // end
+    private void readHeaderFromFile(String filename) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(filename)));) {
+            String headerLine = br.readLine();
+            if (headerLine == null) {
+                throw new RuntimeException("The file \"" + filename + "\" seems to be empty.");
+            }
 
-        return null;
+            fillHeadersFromHeaderLine(headerLine);
+
+        } catch (IOException e) {
+            throw new RuntimeException("Could not load file \"" + filename + "\".");
+        }
     }
 
 
 
 
 
-    public abstract char getDivider();
+    private void fillHeadersFromHeaderLine(String headerLine) {
+        // CSVParser csvParser = new CSVParser(getFieldSeparator());
+        // csvParser.parseLine(headerLine);
+        // TODO use csvparser if used anyway
+        // TODO use java 8 lambda magic
+        for (String headerField : Splitter.on(getFieldSeparator()).split(headerLine)) {
+            CardDavContactAttributes attribute = Configuration.getAlias(headerField);
+            header.add(attribute);
+        }
+    }
+
+
+
+
+
+    public abstract char getFieldSeparator();
 }

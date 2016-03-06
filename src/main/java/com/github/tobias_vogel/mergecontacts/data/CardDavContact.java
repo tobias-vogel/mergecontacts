@@ -2,15 +2,18 @@ package com.github.tobias_vogel.mergecontacts.data;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import com.github.tobias_vogel.mergecontacts.exceptions.IllegalAttributeException;
 import com.github.tobias_vogel.mergecontacts.merging.Merger;
 import com.github.tobias_vogel.mergecontacts.normalizers.Normalizer;
+import com.google.common.base.Joiner;
 
 public class CardDavContact implements Cloneable {
 
@@ -20,8 +23,14 @@ public class CardDavContact implements Cloneable {
         GIVEN_NAME, FAMILY_NAME, NICKNAME, MAIL, WORK_PHONE, HOME_PHONE, FAX, PAGER, MOBILE_PHONE, STREET, STATE, ZIP, COUNTRY, TITLE, ORGANIZATIONAL_UNIT, ORGANIZATION, YEAR, MONTH, DAY, NOTES, SPECIAL_ORG_AND_ORG_UNIT, SPECIAL_POSTAL_ADDRESS
     }
 
-    protected static Set<CardDavContactAttributes> ATTRIBUTES_NOT_TO_SET_DIRECTLY = new HashSet<>(Arrays.asList(
-            CardDavContactAttributes.SPECIAL_ORG_AND_ORG_UNIT, CardDavContactAttributes.SPECIAL_POSTAL_ADDRESS));
+
+
+
+
+    public static final Set<CardDavContactAttributes> getAttributesNotToSetDirectly() {
+        return new HashSet<>(Arrays.asList(CardDavContactAttributes.SPECIAL_ORG_AND_ORG_UNIT,
+                CardDavContactAttributes.SPECIAL_POSTAL_ADDRESS));
+    }
 
     private Map<CardDavContactAttributes, String> attributes;
 
@@ -31,7 +40,15 @@ public class CardDavContact implements Cloneable {
 
 
 
-    private CardDavContact(Map<CardDavContactAttributes, String> providedAttributes,
+    public CardDavContact(Map<CardDavContactAttributes, String> attributes) {
+        this(attributes, Collections.<AdditionalData> emptyList());
+    }
+
+
+
+
+
+    public CardDavContact(Map<CardDavContactAttributes, String> providedAttributes,
             List<AdditionalData> providedAdditionalData) {
         if (providedAttributes == null) {
             throw new RuntimeException("The provided attributes map was null.");
@@ -75,7 +92,7 @@ public class CardDavContact implements Cloneable {
 
 
     public String getAttributeValue(CardDavContactAttributes attributeKey) {
-        if (ATTRIBUTES_NOT_TO_SET_DIRECTLY.contains(attributeKey)) {
+        if (getAttributesNotToSetDirectly().contains(attributeKey)) {
             throw new IllegalAttributeException(attributeKey + " must not be requested directly.");
         }
 
@@ -92,7 +109,7 @@ public class CardDavContact implements Cloneable {
 
 
     public void setAttributeValue(CardDavContactAttributes attributeName, String attributeValue) {
-        if (ATTRIBUTES_NOT_TO_SET_DIRECTLY.contains(attributeName)) {
+        if (getAttributesNotToSetDirectly().contains(attributeName)) {
             throw new IllegalAttributeException(attributeName + " must not be set directly.");
         }
         attributes.put(attributeName, attributeValue);
@@ -103,7 +120,7 @@ public class CardDavContact implements Cloneable {
 
 
     public boolean hasAttribute(CardDavContactAttributes attribute) {
-        if (ATTRIBUTES_NOT_TO_SET_DIRECTLY.contains(attribute)) {
+        if (getAttributesNotToSetDirectly().contains(attribute)) {
             throw new IllegalAttributeException(attribute + " must not be queried directly.");
         }
         return attributes.containsKey(attribute);
@@ -215,6 +232,10 @@ public class CardDavContact implements Cloneable {
         // and this keeps the attributes in order
     }
 
+
+
+
+
     // /**
     // * Deletes the existing old data values for the specified attribute and
     // * replaces them with the new values.
@@ -230,6 +251,22 @@ public class CardDavContact implements Cloneable {
     // additionalData
     // }
 
+    @Override
+    public String toString() {
+        // TODO use java8 magic
+
+        List<String> parts = new ArrayList<>();
+
+        for (Entry<CardDavContactAttributes, String> entry : attributes.entrySet()) {
+            parts.add(entry.getKey() + ": " + entry.getValue());
+        }
+        for (AdditionalData additionalData : additionalData) {
+            parts.add(additionalData.toString());
+        }
+        return "Contact (" + Joiner.on(", ").join(parts) + ")";
+    }
+
+    @Deprecated
     public static class Builder {
         private Map<CardDavContactAttributes, String> params = new HashMap<>(CardDavContactAttributes.values().length);
         private List<AdditionalData> additionalData = new ArrayList<>();

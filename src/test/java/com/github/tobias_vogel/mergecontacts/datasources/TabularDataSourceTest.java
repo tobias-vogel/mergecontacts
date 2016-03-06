@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.github.tobias_vogel.mergecontacts.data.CardDavContact;
@@ -19,6 +20,7 @@ import junit.framework.Assert;
 public class TabularDataSourceTest {
 
     @Test
+    @Ignore
     public void testLoadResource() {
 
         String x = Resources.getResource("test.tsv").getFile();

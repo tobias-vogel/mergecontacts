@@ -12,7 +12,7 @@ public class TsvDataSource extends TabularDataSource {
 
 
     @Override
-    public char getDivider() {
+    public char getFieldSeparator() {
         return '\t';
     }
 
