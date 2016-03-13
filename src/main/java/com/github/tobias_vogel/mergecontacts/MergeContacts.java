@@ -40,7 +40,7 @@ class MergeContacts {
 
 	private static void parseFileSpecifiersFromCommandLineArguments(String[] commandlineArguments) {
 		CommandlineParser commandlineParser = new CommandlineParser();
-		new JCommander(commandlineParser, commandlineArguments);
+		new JCommander(commandlineParser, commandlineArguments).usage();
 
 		mainContactFileSpecifier = commandlineParser.getMainFileSpecifier();
 		additionalContactsFileSpecifiers = commandlineParser.getAdditionalFileSpecifiers();
@@ -67,6 +67,6 @@ class MergeContacts {
 
 	private static void exportContactsToTsv() {
 		// TODO implement
-		System.out.println("would (perhaps) write to " + targetFilename);
+		System.out.println("would (perhaps) write to " + targetFilename + " with overwrite flag: " + overwriteTargetFile);
 	}
 }
